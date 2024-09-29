@@ -1,15 +1,22 @@
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
+import { Suspense, lazy } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-
 import './App.css';
-import Landing from './pages/Landing';
+import Loading from './pages/Loading';
+
+const Landing = lazy(() => import('./pages/Landing'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Landing />,
   },
+  {
+    path: '/dashboard',
+    element: <Dashboard />,
+  }
 ]);
 
 const theme = createTheme({
@@ -34,7 +41,9 @@ const theme = createTheme({
 function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <RouterProvider router={router} />
+      <Suspense fallback={<Loading/>}>
+        <RouterProvider router={router} />
+      </Suspense>
     </MantineProvider>
   );
 }
