@@ -1,0 +1,67 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/tmp/default.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+      - react-build:/app/dist
+    environment:
+      USER_SERVICE_ADDR: user-service:3001
+      QUESTION_SERVICE_ADDR: question-service:8000
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - user-service
+      - question-service
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail --insecure https://localhost/health-check || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    command: /app/start.sh
+    
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-build
+    volumes:
+      - react-build:/app/dist
+    entrypoint: ["sh", "-c", "npm run build && exit 0"]
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service-backend
+    env_file:
+      - .env/.user_env
+    depends_on:
+      - user-service-mongo
+    volumes:
+      - ./user-service:/app
+      - /app/node_modules
+
+  user-service-mongo:
+    container_name: user-service-mongo-test
+    image: mongo:4.2
+    volumes:
+      - mongo-data:/data/db
+
+  question-service:
+    build:
+      context: ./question-service
+    container_name: question-service-backend
+    env_file:
+      - .env/.question_env
+
+volumes:
+  mongo-data:
+  react-build:
