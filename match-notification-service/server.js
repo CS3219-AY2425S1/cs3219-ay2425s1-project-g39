@@ -73,13 +73,19 @@ io.on('connection', (socket) => {
 
   // Register the userId with the socket and send search request to RabbitMQ
   socket.on('register', (userId, difficulty, topics) => {
-    connectedClients[userId] = socket.id;
-    console.log(`User ${userId} registered with socket ${socket.id}`);
+    if (connectedClients[userId]) {
+      io.to(socket.id).emit('existing_search', 'User is already searching in another matching service.');
+      console.log(`User ${userId} is already searching in matching service.`);
+    } else {
+      // Register the new connection
+      connectedClients[userId] = socket.id;
+      console.log(`User ${userId} registered with socket ${socket.id}`);
 
-    // Send search request to RabbitMQ
-    const searchRequest = { userId, difficulty, topics };
-    channel.sendToQueue('search_queue', Buffer.from(JSON.stringify(searchRequest)));
-    console.log(`Search request sent for user ${userId}`);
+      // Send search request to RabbitMQ
+      const searchRequest = { userId, difficulty, topics };
+      channel.sendToQueue('search_queue', Buffer.from(JSON.stringify(searchRequest)));
+      console.log(`Search request sent for user ${userId}`);
+    }
   });
 
   // Handle user disconnect
