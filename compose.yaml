@@ -1,0 +1,141 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./nginx/default.conf:/tmp/default.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+      - react-build:/app/dist
+    environment:
+      USER_SERVICE_ADDR: user-service:3001
+      QUESTION_SERVICE_ADDR: question-service:8000
+      MATCH_NOTIFICATION_SERVICE_ADDR: match-notification-service:4001
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - my-network
+    depends_on:
+      - frontend
+      - user-service
+      - question-service
+      - matching-service
+      - match-notification-service
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail --insecure https://localhost/health-check || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    command: /app/start.sh
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-build
+    depends_on:
+      - match-notification-service
+    volumes:
+      - react-build:/app/dist
+    networks:
+      - my-network
+    entrypoint: [ "sh", "-c", "npm run build && exit 0" ]
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service-backend
+    env_file:
+      - .env/.user_env
+    depends_on:
+      - user-service-mongo
+    networks:
+      - my-network
+    volumes:
+      - ./user-service:/app
+      - /app/node_modules
+
+  user-service-mongo:
+    container_name: user-service-mongo-test
+    image: mongo:4.2
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - my-network
+
+  question-service:
+    build:
+      context: ./question-service
+    container_name: question-service-backend
+    networks:
+      - my-network
+    env_file:
+      - .env/.question_env
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5 # Adjust based on how long it takes for RabbitMQ to be ready
+    env_file:
+      - .env/.rabbitmq_env
+
+  matching-service:
+    build:
+      context: ./matching-service
+    container_name: matching-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      matching-service-redis:
+        condition: service_healthy
+    networks:
+      - my-network
+    env_file:
+      - .env/.matching_env
+
+  match-notification-service:
+    build:
+      context: ./match-notification-service
+    container_name: match-notification-service
+    ports:
+      - "4001:4001"
+    networks:
+      - my-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy # Ensure notification service waits for RabbitMQ to be healthy
+    env_file:
+      - .env/.notification_env
+
+  matching-service-redis:
+    container_name: matching-service-redis
+    image: redis:latest
+    volumes:
+      - redis-data:/data/db
+    networks:
+      - my-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5 # Adjust based on how long it takes for RabbitMQ to be ready
+
+volumes:
+  mongo-data:
+  react-build:
+  rabbitmq_data:
+  redis-data:
+
+
+networks:
+  my-network:
+    driver: bridge
