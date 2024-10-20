@@ -1,0 +1,148 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.dashboard-stats {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.dashboard-stats-difficulty {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.dashboard-stats-topic{
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-stats-topic-label {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dashboard-stats-topic-table {
+  border-collapse: separate; 
+  border-spacing: 0 1.2rem;
+}
+
+.topic-number-solved {
+  font-weight: 700;
+}
+
+.topic-label {
+  font-size: 1.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10rem;
+  text-align: center;
+  border-style: none;
+}
+
+.topic-label-container {
+  padding: 0 1.5rem 0 0;
+}
+
+.dashbaord-table {
+  flex-grow: 1;
+}
+
+.practice-history-container {
+  flex-grow: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.practice-history-label {
+  margin: 1.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.dashboard-practice {
+  justify-content: space-between;
+  padding: 2rem;
+  gap: 1.3rem;
+}
+
+.dashboard-practice-label {
+  font-size: 2.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dashboard-practice-button {
+  padding: 0.5rem 0;
+  margin: 0;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-style: none;
+}
+
+.dashboard-practice-help {
+  align-self: center;
+}
+
+.dashboard-practice-help:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+table.dashboard-table {
+  border-collapse: collapse;
+}
+
+table.dashboard-table tr { 
+  border: solid;
+  border-width: 1px 0;
+}
+
+table.dashboard-table tr:last-child { 
+    border-bottom: none; 
+}
+
+table.dashboard-table th, td {
+  font-size: 1.2rem;
+}
+
+table.dashboard-table td {
+  padding: 1rem 2rem;
+}
+
+table.dashboard-table th {
+  padding: 0.5rem 2rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.view-button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 10rem;
+  text-align: center;
+  border-style: none;
+}
+
+table td, th{
+  white-space: nowrap
+}
+
+table .expand {
+  width: 99%
+}

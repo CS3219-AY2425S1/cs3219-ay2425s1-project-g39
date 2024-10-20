@@ -1,0 +1,45 @@
+.circle-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.circle {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  border: 0.4rem solid;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: white;
+}
+
+.number-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: end;
+}
+
+.number-done {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.number-remaining {
+  font-size: 1.2em;
+  padding-bottom: 0.4rem;
+}
+
+.difficulty-label {
+  font-size: 1.2rem;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+  background: rgba(0,0,0,0);
+}
