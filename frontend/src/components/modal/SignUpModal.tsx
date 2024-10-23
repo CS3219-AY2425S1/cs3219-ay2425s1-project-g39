@@ -9,9 +9,18 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
-import { isEmail, isNotEmpty, matchesField, useForm } from '@mantine/form';
+import {
+  hasLength,
+  isEmail,
+  isNotEmpty,
+  matchesField,
+  useForm,
+} from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useState } from 'react';
+
+import { register } from '../../apis/AuthApi';
+import { useAuth } from '../../hooks/AuthProvider';
 
 interface SignUpModalProps {
   isSignUpModalOpened: boolean;
@@ -25,17 +34,23 @@ function SignUpModal({
   openLoginModal,
 }: SignUpModalProps) {
   const [signUpError, setSignUpError] = useState<string | null>(null);
+  const auth = useAuth();
 
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
       email: '',
+      username: '',
       password: '',
       passwordConfirmation: '',
     },
     validate: {
       email: isEmail('Invalid email'),
-      password: isNotEmpty('Password cannot be empty'),
+      username: isNotEmpty('Username cannot be empty'),
+      password: hasLength(
+        { min: 5 },
+        'Password must have 5 or more characters',
+      ),
       passwordConfirmation: matchesField('password', 'Password does not match'),
     },
   });
@@ -44,6 +59,18 @@ function SignUpModal({
     form.reset();
     setSignUpError(null);
     closeSignUpModal();
+  };
+
+  const handleSignUpClick = (values: typeof form.values) => {
+    const { email, password } = values;
+    register(values).then(
+      () => {
+        auth.loginAction({ email, password }, setSignUpError);
+      },
+      (error: any) => {
+        setSignUpError(error);
+      },
+    );
   };
 
   const handleLogInClick = () => {
@@ -61,7 +88,7 @@ function SignUpModal({
         blur: 4,
       }}
     >
-      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+      <form onSubmit={form.onSubmit(handleSignUpClick)}>
         <Stack p="16px">
           <Title order={3} ta="center">
             Sign up now
@@ -70,6 +97,11 @@ function SignUpModal({
             {...form.getInputProps('email')}
             key={form.key('email')}
             placeholder="Email"
+          />
+          <TextInput
+            {...form.getInputProps('username')}
+            key={form.key('username')}
+            placeholder="Username"
           />
           <PasswordInput
             {...form.getInputProps('password')}
