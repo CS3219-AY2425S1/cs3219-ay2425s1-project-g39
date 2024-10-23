@@ -53,6 +53,11 @@ const saveCollaborationHistory = async (req, res) => {
 // Delete all history
 const deleteAllCollaborationHistory = async (req, res) => {
     try {
+        const token = req.headers['authorization']?.split(' ')[1]; // Assuming "Bearer <token>" format
+        const decoded = jwt.decode(token); // Decode the JWT token (no verification)
+        if (!decoded || decoded.role !== 'admin') {
+            return res.status(403).json({ error: 'Unauthorized access.' });
+        }
         await deleteAllHistory();
         res.status(200).json({ message: 'All history deleted successfully.' });
     } catch (err) {
