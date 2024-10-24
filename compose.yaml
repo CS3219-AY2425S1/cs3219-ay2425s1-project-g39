@@ -12,6 +12,7 @@ services:
       USER_SERVICE_ADDR: user-service:3001
       QUESTION_SERVICE_ADDR: question-service:8000
       MATCH_NOTIFICATION_SERVICE_ADDR: match-notification-service:4001
+      HISTORY_SERVICE_ADDR: history-service:5001
     ports:
       - "80:80"
       - "443:443"
@@ -23,6 +24,7 @@ services:
       - question-service
       - matching-service
       - match-notification-service
+      - history-service
     healthcheck:
       test: [ "CMD-SHELL", "curl --silent --fail --insecure https://localhost/health-check || exit 1" ]
       interval: 10s
@@ -126,6 +128,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5 # Adjust based on how long it takes for RabbitMQ to be ready
+
+  history-service:
+    build:
+      context: ./history-service
+    container_name: history-service
+    networks:
+      - my-network
+    env_file:
+      - .env/.history_env
 
 volumes:
   mongo-data:

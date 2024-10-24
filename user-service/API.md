@@ -1,6 +1,6 @@
 # User Service API Documentation
 
-endpoint: `http://localhost:3001`
+endpoint: `http://localhost/api/history`
 
 ## User Routes
 
