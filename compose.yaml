@@ -113,7 +113,7 @@ services:
         condition: service_healthy # Ensure notification service waits for RabbitMQ to be healthy
     env_file:
       - .env/.notification_env
-
+      
   matching-service-redis:
     container_name: matching-service-redis
     image: redis:latest
@@ -126,6 +126,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5 # Adjust based on how long it takes for RabbitMQ to be ready
+
+  collaboration-service:
+    build:
+      context: ./collaboration-service
+    container_name: collaboration-service-backend
+    networks:
+      - my-network
+    depends_on:
+      - user-service
+    # ports:
+    #   - "8004:8004" # for testing
+    env_file:
+      - .env/.collaboration_env
 
 volumes:
   mongo-data:
