@@ -8,15 +8,17 @@ All API endpoints are prefixed with `/api/collab`.
 
 All API endpoints require a valid JWT token attained from our user service.
 
-This should be done under the headers['authorization'] in the form "Bearer userJWT".
-
 This applies for the initial 'connection' event for our socket.io as well.
+
+## Example Frontend
+
+A *deprecated* template for a frontend client using our service can be found in the public/ folder.
 
 ## API Endpoints
 
 ### GET `/check-session/`
 
-Checks if a user is part of an active session.
+Checks if a user is part of an active session. This endpoint is meant as a way to bypass the matching service if an earlier session exists.
 
 - **Response**:
 
