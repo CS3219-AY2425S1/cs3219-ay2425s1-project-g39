@@ -15,3 +15,6 @@ RUN npm install typescript
 
 # Copy the rest of the application
 COPY . .
+
+# Build the React app
+RUN npm run build
