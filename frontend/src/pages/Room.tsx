@@ -5,10 +5,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
 
-import CodeEditorLayout from '../components/layout/codeEditorLayout/CodeEditorLayout';
+import CodeEditorLayout from '../components/layout/codeEditorLayout/CodeEditorLayout'; // Remove this if not needed
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import RoomTabs from '../components/tabs/RoomTabs';
 import config from '../config';
+
+import * as Y from 'yjs';
+import { CodemirrorBinding } from 'y-codemirror';
+import { WebrtcProvider } from 'y-webrtc';
+import * as CodeMirror from 'codemirror';
 
 function Room() {
   const [
@@ -17,13 +22,15 @@ function Room() {
   ] = useDisclosure(false);
 
   const [code, setCode] = useState('');
-
   const navigate = useNavigate();
   const location = useLocation();
   const sessionData = location.state;
 
   const socketRef = useRef<Socket | null>(null);
   const isRemoteUpdateRef = useRef(false);
+  const editorRef = useRef<CodeMirror.EditorView | null>(null);
+  const ydoc = useRef(new Y.Doc()).current; // Create Yjs document
+  const providerRef = useRef<WebrtcProvider | null>(null);
 
   useEffect(() => {
     if (!sessionData) {
@@ -32,13 +39,29 @@ function Room() {
 
     const { sessionId, matchedUserId, questionId } = sessionData;
     connectSocket(sessionId, matchedUserId, questionId);
+    
+    // Initialize Yjs provider for collaborative editing
+    providerRef.current = new WebrtcProvider('codemirror-demo-room', ydoc);
+    const yText = ydoc.getText('codemirror');
+    const yUndoManager = new Y.UndoManager(yText);
+
+    // Initialize CodeMirror editor
+    editorRef.current = CodeMirror(document.getElementById('editor'), {
+      mode: 'javascript',
+      lineNumbers: true,
+    });
+
+    // Bind Yjs document to CodeMirror
+    new CodemirrorBinding(yText, editorRef.current, providerRef.current.awareness, { yUndoManager });
+
+    return () => {
+      // Clean up on unmount
+      providerRef.current?.destroy();
+      ydoc.destroy();
+    };
   }, [sessionData]);
 
-  const connectSocket = (
-    sessionId: string,
-    matchedUserId: string,
-    questionId: number,
-  ) => {
+  const connectSocket = (sessionId: string, matchedUserId: string, questionId: number) => {
     if (socketRef.current) {
       socketRef.current.disconnect();
     }
@@ -64,12 +87,9 @@ function Room() {
     });
 
     socketRef.current.on('load-code', (newCode) => {
-      setCode(newCode);
-    });
-
-    socketRef.current.on('code-updated', (newCode) => {
-      isRemoteUpdateRef.current = true;
-      setCode(newCode);
+      if (editorRef.current) {
+        editorRef.current.setValue(newCode);
+      }
     });
 
     socketRef.current.on('user-joined', () => {
@@ -91,14 +111,6 @@ function Room() {
     socketRef.current.on('disconnect', handleLeaveSession);
   };
 
-  useEffect(() => {
-    if (isRemoteUpdateRef.current) {
-      isRemoteUpdateRef.current = false;
-    } else {
-      socketRef.current?.emit('edit-code', code);
-    }
-  }, [code]);
-
   const handleLeaveSession = () => {
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -117,11 +129,7 @@ function Room() {
           <RoomTabs questionId={sessionData.questionId} />
         </Stack>
 
-        <CodeEditorLayout
-          openLeaveSessionModal={openLeaveSessionModal}
-          code={code}
-          setCode={setCode}
-        />
+        <div id="editor" style={{ height: '100%', width: '500px' }} /> {/* CodeMirror editor container */}
       </Group>
 
       <ConfirmationModal

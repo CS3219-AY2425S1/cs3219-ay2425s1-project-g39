@@ -16,15 +16,20 @@
     "@mantine/notifications": "^7.13.0",
     "@tabler/icons": "^3.19.0",
     "@tabler/icons-react": "^3.19.0",
+    "@types/codemirror": "^5.60.15",
     "@uiw/codemirror-extensions-langs": "^4.23.5",
     "@uiw/codemirror-theme-sublime": "^4.23.5",
     "@uiw/react-codemirror": "^4.23.5",
     "all": "^0.0.0",
     "axios": "^1.7.7",
+    "codemirror": "^6.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
-    "socket.io-client": "^4.8.0"
+    "socket.io-client": "^4.8.0",
+    "y-codemirror": "^3.0.1",
+    "y-webrtc": "^10.3.0",
+    "yjs": "^13.6.20"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
