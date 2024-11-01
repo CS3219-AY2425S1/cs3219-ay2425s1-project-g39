@@ -1,6 +1,7 @@
 import { sublimeInit } from '@uiw/codemirror-theme-sublime';
 import CodeMirror, { Extension, ViewUpdate } from '@uiw/react-codemirror';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
+import { useRef } from 'react';
 
 import './CodeEditor.css';
 import classes from './CodeEditor.module.css';
@@ -22,8 +23,10 @@ const customSublime = sublimeInit({
 class FakeCursorWidget extends WidgetType {
   toDOM(): HTMLElement {
     const cursor = document.createElement('span');
-    cursor.className = classes.fakeCursor; // Apply custom style for the fake cursor
-    cursor.textContent = '|'; // Visual representation of the cursor
+    cursor.className = classes.fakeCursor;
+    cursor.textContent = '|';
+    // You can use the position if you need it for something, 
+    // but currently, it's not necessary for rendering.
     return cursor;
   }
 
@@ -32,6 +35,7 @@ class FakeCursorWidget extends WidgetType {
   }
 }
 
+
 function CodeEditor({
   code,
   setCode,
@@ -39,12 +43,12 @@ function CodeEditor({
   viewUpdateRef,
   fakeCursorPositionRef,
 }: CodeEditorProps) {
+  const editorRef = useRef<EditorView | null>(null);
 
   const onUpdate = (viewUpdate: ViewUpdate) => { 
     viewUpdateRef.current = viewUpdate;
   };
 
-  // Create a fake cursor extension that updates based on the fakeCursorPositionRef
   const fakeCursorExtension: Extension = EditorView.decorations.of(() => {
     const position = fakeCursorPositionRef.current;
     return position >= 0 ? Decoration.set([Decoration.widget({ widget: new FakeCursorWidget() }).range(position)]) : Decoration.none;
@@ -52,6 +56,7 @@ function CodeEditor({
 
   return (
     <CodeMirror
+      ref={editorRef}
       value={code}
       theme={customSublime}
       className={classes.codeMirror}

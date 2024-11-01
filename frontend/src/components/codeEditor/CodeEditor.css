@@ -1,30 +1,7 @@
-.cm-editor {
-  height: 100%;
-}
-
-.cm-gutter {
-  background: var(--mantine-color-slate-9);
-}
-
-.cm-scroller {
-  position: absolute !important;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow-y: auto;
-  scrollbar-color: #727277 var(--mantine-color-slate-9);
-}
-
-.cm-focused {
-  outline: none !important;
-}
-
 .fakeCursor {
-  font-size: 2em; /* Adjust this size as needed */
-  line-height: 1; /* Set line height to normal for better alignment */
-  color: red; /* Change color for visibility */
-  display: inline-block; /* Ensure it behaves like an inline element */
-  height: 1em; /* You can adjust this if needed */
+  position: absolute; /* Use absolute positioning */
+  width: 2px; /* Narrow width */
+  height: 1em; /* Match line height */
+  background-color: red; /* Choose a visible color */
+  pointer-events: none; /* Ensure it doesn't interfere with mouse events */
 }
-

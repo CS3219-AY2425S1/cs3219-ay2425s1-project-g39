@@ -70,7 +70,7 @@ function Room() {
       }
     
       // Set the fake cursor position to the start (position 0)
-      fakeCursorPositionRef.current = 0;
+      fakeCursorPositionRef.current = 5;
 
       // Update the code with the new content
       isRemoteUpdateRef.current = true;
