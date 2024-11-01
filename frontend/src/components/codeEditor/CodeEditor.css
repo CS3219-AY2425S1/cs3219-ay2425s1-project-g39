@@ -19,3 +19,12 @@
 .cm-focused {
   outline: none !important;
 }
+
+.fakeCursor {
+  font-size: 2em; /* Adjust this size as needed */
+  line-height: 1; /* Set line height to normal for better alignment */
+  color: red; /* Change color for visibility */
+  display: inline-block; /* Ensure it behaves like an inline element */
+  height: 1em; /* You can adjust this if needed */
+}
+

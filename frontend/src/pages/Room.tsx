@@ -25,6 +25,7 @@ function Room() {
   const socketRef = useRef<Socket | null>(null);
   const isRemoteUpdateRef = useRef(false);
   const viewUpdateRef = useRef<ViewUpdate | null>(null);
+  const fakeCursorPositionRef = useRef(0); // Fake cursor position reference
 
   useEffect(() => {
     if (!sessionData) return;
@@ -59,16 +60,18 @@ function Room() {
     socketRef.current.on('load-code', (newCode) => setCode(newCode));
 
     socketRef.current.on('code-updated', (newCode) => {
-      // Capture the current cursor position as line and column
       let cursorLine = 0;
       let cursorColumn = 0;
       if (viewUpdateRef.current) {
         const { head } = viewUpdateRef.current.view.state.selection.main;
         const pos = viewUpdateRef.current.view.state.doc.lineAt(head);
-        cursorLine = pos.number - 1; // Adjusting for 0-based index
+        cursorLine = pos.number - 1; // Adjust for 0-based index
         cursorColumn = head - pos.from;
       }
     
+      // Set the fake cursor position to the start (position 0)
+      fakeCursorPositionRef.current = 0;
+
       // Update the code with the new content
       isRemoteUpdateRef.current = true;
       setCode(newCode);
@@ -76,17 +79,15 @@ function Room() {
       // Restore line and column position after the code has been updated
       setTimeout(() => {
         if (viewUpdateRef.current) {
-          const line = viewUpdateRef.current.view.state.doc.line(cursorLine + 1); // Adjusting back to 1-based
+          const line = viewUpdateRef.current.view.state.doc.line(cursorLine + 1); // Adjust back to 1-based
           const newPos = line.from + cursorColumn;
           viewUpdateRef.current.view.dispatch({
             selection: { anchor: newPos, head: newPos },
           });
         }
-      }, 5); // the delay to be set may vary from device to device
+      }, 5);
     });
     
-    
-
     socketRef.current.on('user-joined', () => {
       notifications.show({
         title: 'Partner connected',
@@ -134,6 +135,7 @@ function Room() {
           code={code}
           setCode={setCode}
           viewUpdateRef={viewUpdateRef}
+          fakeCursorPositionRef={fakeCursorPositionRef}
         />
       </Group>
 

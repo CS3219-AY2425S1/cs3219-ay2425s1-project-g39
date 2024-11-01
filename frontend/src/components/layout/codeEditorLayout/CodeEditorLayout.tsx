@@ -11,6 +11,7 @@ interface CodeEditorLayoutProps {
   code: string;
   setCode: React.Dispatch<React.SetStateAction<string>>;
   viewUpdateRef: React.MutableRefObject<ViewUpdate | null>;
+  fakeCursorPositionRef: React.MutableRefObject<number>;
 }
 
 type SupportedLanguage = Extract<keyof typeof langs, 'python' | 'java'>;
@@ -20,7 +21,8 @@ function CodeEditorLayout({
   openLeaveSessionModal,
   code,
   setCode,
-  viewUpdateRef
+  viewUpdateRef,
+  fakeCursorPositionRef, 
 }: CodeEditorLayoutProps) {
   const [language, setLanguage] = useState<SupportedLanguage>('python');
   const [extensions, setExtensions] = useState<Extension[]>([
@@ -77,7 +79,13 @@ function CodeEditorLayout({
         </Button>
       </Group>
 
-      <CodeEditor code={code} setCode={setCode} extensions={extensions} viewUpdateRef={viewUpdateRef} />
+      <CodeEditor
+        code={code}
+        setCode={setCode}
+        extensions={extensions}
+        viewUpdateRef={viewUpdateRef}
+        fakeCursorPositionRef={fakeCursorPositionRef} // Pass fakeCursorPosition to CodeEditor
+      />
     </Stack>
   );
 }
