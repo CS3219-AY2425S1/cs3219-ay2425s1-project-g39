@@ -62,6 +62,9 @@ function Room() {
   const isRemoteUpdateRef = useRef(false);
   const viewUpdateRef = useRef<ViewUpdate | null>(null);
 
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+
   const configServer = {
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
   };
@@ -102,6 +105,33 @@ function Room() {
       }
     };
   }, []);
+
+  // Toggle mute
+  const handleMuteUnmute = () => {
+    if (localStream) {
+      const audioTrack = localStream
+        .getTracks()
+        .find((track) => track.kind === 'audio');
+      if (audioTrack) {
+        audioTrack.enabled = isMuted;
+        setIsMuted(!isMuted);
+      }
+      
+    }
+  };
+
+  // Toggle video
+  const handleCameraToggle = () => {
+    if (localStream) {
+      const videoTrack = localStream
+        .getTracks()
+        .find((track) => track.kind === 'video');
+      if (videoTrack) {
+        videoTrack.enabled = isVideoOff;
+        setIsVideoOff(!isVideoOff);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!loading && communicationSocketRef.current !== null) {
@@ -401,6 +431,14 @@ function Room() {
         <Stack h="100%" w="500px" gap="10px">
           <Group gap="10px">
             <VideoCall localStream={localStream} remoteStream={remoteStream} />
+          </Group>
+          <Group  style={{ marginTop: 20 }}>
+            <Button onClick={handleMuteUnmute}>
+              {isMuted ? 'Unmute' : 'Mute'}
+            </Button>
+            <Button onClick={handleCameraToggle}>
+              {isVideoOff ? 'Turn Camera On' : 'Turn Camera Off'}
+            </Button>
           </Group>
           <RoomTabs
             question={question}
