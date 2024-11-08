@@ -335,6 +335,11 @@ function Room() {
     communicationSocketRef.current?.disconnect();
     communicationSocketRef.current = null;
     isRoomJoinedRef.current = false;
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
+      localStreamRef.current = null;
+    }
+    peerConnectionRef.current = null;
     navigate('/dashboard');
   };
 
