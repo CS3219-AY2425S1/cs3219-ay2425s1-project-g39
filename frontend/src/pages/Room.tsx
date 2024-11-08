@@ -41,6 +41,7 @@ function Room() {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState<SupportedLanguage>('python');
   const [isRunningCode, setIsRunningCode] = useState(false);
+  const isRoomJoinedRef = useRef<boolean>(false);
 
   const [
     isLeaveSessionModalOpened,
@@ -90,11 +91,12 @@ function Room() {
     requestMediaPermissions();
 
     return () => {
-      console.log('cleaning up');
       if (localStreamRef.current) {
-        console.log('unmounting media');
         localStreamRef.current.getTracks().forEach((track) => track.stop());
+        localStreamRef.current = null;
       }
+      peerConnectionRef.current = null;
+      stopRemoteStream();
       // Disconnect sockets
       if (collaborationSocketRef.current) {
         collaborationSocketRef.current.disconnect();
@@ -103,6 +105,7 @@ function Room() {
       if (communicationSocketRef.current) {
         communicationSocketRef.current.disconnect();
         communicationSocketRef.current = null;
+        isRoomJoinedRef.current = false;
       }
     };
   }, []);
@@ -117,7 +120,6 @@ function Room() {
         audioTrack.enabled = isMuted;
         setIsMuted(!isMuted);
       }
-      
     }
   };
 
@@ -136,17 +138,20 @@ function Room() {
 
   useEffect(() => {
     const initializeCall = async () => {
-      if (!loading && localStream && communicationSocketRef !== null && communicationSocketRef.current !== null) {
-        console.log('Emitting ready-to-call');
+      if (!loading && localStream && communicationSocketRef !== null && communicationSocketRef.current !== null && isRoomJoinedRef.current) {
+        
         // Wait a moment to ensure everything is stable
         setTimeout(() => {
-          communicationSocketRef.current?.emit('ready-to-call');
+          if (communicationSocketRef.current) {
+          console.log('Emitting ready-to-call');
+          communicationSocketRef.current.emit('ready-to-call');
+          }
         }, 500);
       }
     };
     
     initializeCall();
-  }, [loading, localStream, communicationSocketRef.current]);
+  }, [loading, localStream, communicationSocketRef.current, isRoomJoinedRef.current]);
 
   useEffect(() => {
     if (!permissionsGranted || !sessionData) {
@@ -178,6 +183,8 @@ function Room() {
   ) => {
     if (collaborationSocketRef.current) {
       collaborationSocketRef.current.disconnect();
+      collaborationSocketRef.current = null;
+      isRoomJoinedRef.current = false;
     }
 
     const token = localStorage.getItem('token');
@@ -289,6 +296,10 @@ function Room() {
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
 
+    communicationSocketRef.current.on('roomJoined', () => {
+      isRoomJoinedRef.current = true;
+    })
+
     communicationSocketRef.current.on('offer', handleReceiveOffer);
     communicationSocketRef.current.on('answer', handleReceiveAnswer);
     communicationSocketRef.current.on('candidate', handleReceiveCandidate);
@@ -306,6 +317,13 @@ function Room() {
     isRemoteUpdateRef.current = false;
   }, [code]);
 
+  const stopRemoteStream = () => {
+    if (remoteStream) {
+      remoteStream.getTracks().forEach((track) => track.stop());
+      setRemoteStream(null); // Set remoteStream to null after stopping its tracks
+    }
+  };
+
   const handleLanguageChange = (newLanguage: SupportedLanguage) => {
     setLanguage(newLanguage);
     collaborationSocketRef.current?.emit('edit-language', newLanguage);
@@ -316,6 +334,7 @@ function Room() {
     collaborationSocketRef.current = null;
     communicationSocketRef.current?.disconnect();
     communicationSocketRef.current = null;
+    isRoomJoinedRef.current = false;
     navigate('/dashboard');
   };
 
@@ -407,7 +426,7 @@ function Room() {
   };
 
   const handleUserLeft = () => {
-    setRemoteStream(null); // Reset the remote video
+    stopRemoteStream();
   };
 
   const handleCloseModal = () => {
