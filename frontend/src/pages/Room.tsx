@@ -1,6 +1,7 @@
-import { Button, Group, Loader, Modal, Stack, Text } from '@mantine/core';
+import { Button, Group, Loader, Modal, Stack, Text, ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
+import { IconMicrophone, IconMicrophoneOff, IconVideo, IconVideoOff } from '@tabler/icons-react';
 import { ViewUpdate } from '@uiw/react-codemirror';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -134,11 +135,18 @@ function Room() {
   };
 
   useEffect(() => {
-    if (!loading && communicationSocketRef.current !== null) {
-      console.log('Emitting ready-to-call');
-      communicationSocketRef.current.emit('ready-to-call');
-    }
-  }, [loading, communicationSocketRef.current]);
+    const initializeCall = async () => {
+      if (!loading && localStream && communicationSocketRef !== null && communicationSocketRef.current !== null) {
+        console.log('Emitting ready-to-call');
+        // Wait a moment to ensure everything is stable
+        setTimeout(() => {
+          communicationSocketRef.current?.emit('ready-to-call');
+        }, 500);
+      }
+    };
+    
+    initializeCall();
+  }, [loading, localStream, communicationSocketRef.current]);
 
   useEffect(() => {
     if (!permissionsGranted || !sessionData) {
@@ -364,11 +372,13 @@ function Room() {
   };
 
   const handleReadyToCall = async (user: string) => {
+    console.log('handling ready to call');
     if (
       peerConnectionRef.current &&
       communicationSocketRef.current &&
       user !== userId
     ) {
+      console.log('Creating offer');
       const offer = await peerConnectionRef.current.createOffer();
       await peerConnectionRef.current.setLocalDescription(offer);
       communicationSocketRef.current.emit('offer', offer);
@@ -432,13 +442,13 @@ function Room() {
           <Group gap="10px">
             <VideoCall localStream={localStream} remoteStream={remoteStream} />
           </Group>
-          <Group  style={{ marginTop: 20 }}>
-            <Button onClick={handleMuteUnmute}>
-              {isMuted ? 'Unmute' : 'Mute'}
-            </Button>
-            <Button onClick={handleCameraToggle}>
-              {isVideoOff ? 'Turn Camera On' : 'Turn Camera Off'}
-            </Button>
+          <Group  justify="center">
+            <ActionIcon onClick={handleMuteUnmute} size="xl" variant="outline">
+              {isMuted ? <IconMicrophoneOff size={24} /> : <IconMicrophone size={24} />}
+            </ActionIcon>
+            <ActionIcon onClick={handleCameraToggle} size="xl" variant="outline" style={{ marginLeft: 10 }}>
+              {isVideoOff ? <IconVideoOff size={24} /> : <IconVideo size={24} />}
+            </ActionIcon>
           </Group>
           <RoomTabs
             question={question}
