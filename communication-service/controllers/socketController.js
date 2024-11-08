@@ -17,7 +17,6 @@ module.exports = (io) => {
         socket.emit('error', `Room ${roomId} is full.`);
       } else {
         socket.join(roomId);
-        socket.emit('roomJoined', roomId);
         console.log(`User ${socket.data.user.username} joined room ${roomId}`);
 
         if (roomMessages[roomId]) {
@@ -59,6 +58,8 @@ module.exports = (io) => {
             delete roomMessages[roomId];
           }
         });
+
+        socket.emit('roomJoined', roomId);
       }
     });
   });

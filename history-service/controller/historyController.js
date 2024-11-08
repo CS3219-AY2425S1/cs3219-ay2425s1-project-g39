@@ -72,8 +72,6 @@ const saveCollaborationHistory = async (req, res) => {
         textWritten,
         questionId,
         programmingLanguage,
-        sessionDuration,
-        sessionStatus,
     } = req.body;
 
     try {
@@ -82,9 +80,7 @@ const saveCollaborationHistory = async (req, res) => {
             userIdTwo,
             textWritten,
             questionId,
-            programmingLanguage,
-            sessionDuration,
-            sessionStatus,
+            programmingLanguage
         });
 
         await saveHistory(history);

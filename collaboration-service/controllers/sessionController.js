@@ -1,8 +1,38 @@
 // controllers/sessionController.js
+const https = require('https');
 
 const codeSessions = {};
 
 const sessionsForUser = {};
+
+const updateHistory = async (userId, matchedUserId, questionId, code, programmingLanguage, token) => {
+  const agent = new https.Agent({
+    rejectUnauthorized: false,
+  });
+
+  const { default: fetch } = await import('node-fetch');
+
+  const response = await fetch("https://nginx/api/history", {
+    method: 'POST',
+    headers: {
+      'Authorization': token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      userIdOne: userId,
+      userIdTwo: matchedUserId,
+      textWritten: code,
+      questionId: questionId,
+      programmingLanguage: programmingLanguage,
+    }),
+    agent: agent,
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('Error saving history:', errorData);
+  }
+}
 
 // Handle user joining a session
 const joinSession = (socket, io) => {
@@ -106,6 +136,9 @@ const joinSession = (socket, io) => {
 
         setTimeout(async () => {
           if (codeSession && codeSession.timeoutStart == timeoutStart) {
+            // make api call to history service to save the session
+            await updateHistory(userId, matchedUserId, questionId, codeSessions[sessionId].code, codeSession.programmingLanguage, socket.handshake.auth.token);
+            
             delete codeSessions[sessionId];
             if (
               sessionsForUser[userId] &&
@@ -120,25 +153,9 @@ const joinSession = (socket, io) => {
               delete sessionsForUser[matchedUserId];
             }
 
-            // make api call to history service to save the session
-            await fetch("http://nginx/api/history", {
-              method: 'POST',
-              headers: {
-                'Authorization': socket.handshake.auth.token,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                userIdOne: userId,
-                userIdTwo: matchedUserId,
-                textWritten: codeSession.code,
-                questionId: codeSession.questionId,
-                programmingLanguage: codeSession.programmingLanguage,
-              }),
-            });
-
             console.log(`Session ${sessionId} deleted.`);
           }
-        }, 360000); // 5 minutes
+        }, 10000); // 5 minutes (changed to 10 seconds for now)
       }
     });
   });

@@ -21,12 +21,12 @@ import {
   CodeExecutionInput,
   CodeOutput,
   SupportedLanguage,
+  TestResult,
 } from '../types/CodeExecutionType';
-import { Question } from '../types/QuestionType';
+import { Question, TestCase } from '../types/QuestionType';
 
 function Room() {
   const [loading, setLoading] = useState(true);
-  const [permissionsGranted, setPermissionsGranted] = useState(false);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
 
@@ -35,6 +35,13 @@ function Room() {
 
   const [question, setQuestion] = useState<Question | undefined>(undefined);
   const [codeOutput, setCodeOutput] = useState<CodeOutput | undefined>(
+    undefined,
+  );
+  const [customCodeInput, setCustomCodeInput] = useState('');
+  const [customCodeOutput, setCustomCodeOutput] = useState<
+    CodeOutput | undefined
+  >(undefined);
+  const [testResults, setTestResults] = useState<TestResult[] | undefined>(
     undefined,
   );
 
@@ -71,6 +78,7 @@ function Room() {
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
   };
 
+
   useEffect(() => {
     const requestMediaPermissions = async () => {
       try {
@@ -80,7 +88,6 @@ function Room() {
         });
         setLocalStream(stream);
         localStreamRef.current = stream;
-        setPermissionsGranted(true);
         setLoading(false);
       } catch (error) {
         console.error('Permissions not granted:', error);
@@ -154,7 +161,7 @@ function Room() {
   }, [loading, localStream, communicationSocketRef.current, isRoomJoinedRef.current]);
 
   useEffect(() => {
-    if (!permissionsGranted || !sessionData) {
+    if (loading || !sessionData) {
       return;
     }
 
@@ -173,7 +180,7 @@ function Room() {
         },
       );
     }
-  }, [permissionsGranted, sessionData]);
+  }, [sessionData, loading]);
 
   // Connect Collaboration Socket
   const connectCollaborationSocket = (
@@ -285,6 +292,11 @@ function Room() {
       communicationSocketRef.current?.emit('joinRoom', roomId);
     });
 
+    communicationSocketRef.current.on('roomJoined', () => {
+      communicationSocketRef.current?.emit('ready-to-call');
+      isRoomJoinedRef.current = true;
+    }); 
+
     communicationSocketRef.current.on(
       'loadPreviousMessages',
       (pastMessages: ChatMessage[]) => {
@@ -295,10 +307,6 @@ function Room() {
     communicationSocketRef.current.on('chatMessage', (msg: ChatMessage) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
-
-    communicationSocketRef.current.on('roomJoined', () => {
-      isRoomJoinedRef.current = true;
-    })
 
     communicationSocketRef.current.on('offer', handleReceiveOffer);
     communicationSocketRef.current.on('answer', handleReceiveAnswer);
@@ -349,10 +357,44 @@ function Room() {
       code,
       language,
     };
-    executeCode(codeExecutionInput).then(
-      (codeOutput: CodeOutput) => {
+    const customCodeExecutionInput: CodeExecutionInput = {
+      code,
+      language,
+      input: customCodeInput,
+    };
+    const newTestResults: TestResult[] = Array(
+      question?.testCases?.length || 0,
+    ).fill(null);
+
+    Promise.all([
+      executeCode(codeExecutionInput).then((codeOutput: CodeOutput) => {
         setCodeOutput(codeOutput);
         collaborationSocketRef.current?.emit('codex-output', codeOutput);
+      }),
+      executeCode(customCodeExecutionInput).then((codeOutput: CodeOutput) => {
+        setCustomCodeOutput(codeOutput);
+      }),
+      ...(question?.testCases?.map(async (testCase: TestCase, i: number) => {
+        const testCaseExecutionInput: CodeExecutionInput = {
+          code,
+          language,
+          input: testCase.input,
+        };
+
+        const codeOutput = await executeCode(testCaseExecutionInput);
+        const newTestResult: TestResult = {
+          input: testCase.input,
+          answer: testCase.answer,
+          output: codeOutput.output,
+          isError: codeOutput.isError,
+        };
+        newTestResults[i] = newTestResult;
+      }) ?? []),
+    ]).then(
+      () => {
+        if (question?.testCases) {
+          setTestResults(newTestResults);
+        }
         setIsRunningCode(false);
       },
       (error: any) => {
@@ -499,6 +541,11 @@ function Room() {
           <CodeOutputTabs
             codeOutput={codeOutput}
             testCases={question?.testCases}
+            testResults={testResults}
+            customCodeOutput={customCodeOutput}
+            customCodeInput={customCodeInput}
+            setCustomCodeInput={setCustomCodeInput}
+            isRunningCode={isRunningCode}
           />
         </Stack>
       </Group>

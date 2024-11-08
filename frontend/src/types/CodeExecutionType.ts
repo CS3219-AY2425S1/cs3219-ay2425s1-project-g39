@@ -15,3 +15,10 @@ export type CodeOutput = {
   output: string;
   isError: boolean;
 };
+
+export type TestResult = {
+  input: string;
+  answer: string;
+  output: string;
+  isError: boolean;
+};
