@@ -144,23 +144,6 @@ function Room() {
   };
 
   useEffect(() => {
-    const initializeCall = async () => {
-      if (!loading && localStream && communicationSocketRef !== null && communicationSocketRef.current !== null && isRoomJoinedRef.current) {
-        
-        // Wait a moment to ensure everything is stable
-        setTimeout(() => {
-          if (communicationSocketRef.current) {
-          console.log('Emitting ready-to-call');
-          communicationSocketRef.current.emit('ready-to-call');
-          }
-        }, 500);
-      }
-    };
-    
-    initializeCall();
-  }, [loading, localStream, communicationSocketRef.current, isRoomJoinedRef.current]);
-
-  useEffect(() => {
     if (loading || !sessionData) {
       return;
     }
@@ -438,16 +421,10 @@ function Room() {
   };
 
   const handleReadyToCall = async (user: string) => {
-    console.log('handling ready to call');
-    if (
-      peerConnectionRef.current &&
-      communicationSocketRef.current &&
-      user !== userId
-    ) {
-      console.log('Creating offer');
+    if (peerConnectionRef.current && user !== userId) {
       const offer = await peerConnectionRef.current.createOffer();
       await peerConnectionRef.current.setLocalDescription(offer);
-      communicationSocketRef.current.emit('offer', offer);
+      communicationSocketRef.current?.emit('offer', offer);
     }
   };
 
@@ -474,7 +451,18 @@ function Room() {
 
   const handleUserLeft = () => {
     stopRemoteStream();
+    resetPeerConnection(); // Reset the peer connection
   };
+
+  const resetPeerConnection = () => {
+    if (peerConnectionRef.current) {
+      peerConnectionRef.current.onicecandidate = null;
+      peerConnectionRef.current.ontrack = null;
+      peerConnectionRef.current.close();
+      peerConnectionRef.current = null;
+    }
+    setupPeerConnection();  // Re-setup a new peer connection
+  };  
 
   const handleCloseModal = () => {
     closeModal();

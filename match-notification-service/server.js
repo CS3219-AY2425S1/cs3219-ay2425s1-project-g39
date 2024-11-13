@@ -106,7 +106,7 @@ io.on('connection', (socket) => {
   console.log(`New client connected: ${socket.id}`);
 
   // Register the userId with the socket and send search request to RabbitMQ
-  socket.on('register', (userId, difficulty, topics) => {
+  socket.on('register', (userId, difficulty, topics, token) => {
     if (connectedClients[userId]) {
       io.to(socket.id).emit(
         'existing_search',
@@ -117,9 +117,9 @@ io.on('connection', (socket) => {
       // Register the new connection
       connectedClients[userId] = socket.id;
       console.log(`User ${userId} registered with socket ${socket.id}`);
-
+      
       // Send search request to RabbitMQ
-      const searchRequest = { userId, difficulty, topics };
+      const searchRequest = { userId, difficulty, topics, token };
       channel.sendToQueue(
         'search_queue',
         Buffer.from(JSON.stringify(searchRequest)),

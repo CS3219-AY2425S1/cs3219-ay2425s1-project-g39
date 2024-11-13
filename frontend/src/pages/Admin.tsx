@@ -1,34 +1,22 @@
-import {
-  ActionIcon,
-  AppShell,
-  Badge,
-  Button,
-  Container,
-  Group,
-  MultiSelect,
-  Select,
-  Stack,
-  Table,
-  Title,
-} from '@mantine/core';
+import { ActionIcon, AppShell, Badge, Button, Container, Group, MultiSelect, Select, Stack, Table, Title } from '@mantine/core';
 import { useDisclosure, useListState } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconEdit, IconEye, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { checkResponse } from '../apis/CheckResponse';
+import { createNewQuestion, deleteQuestionById, getAllQuestions, updateQuestionById } from '../apis/QuestionApi';
 import Header from '../components/header/Header';
 import ConfirmationModal from '../components/modal/ConfirmationModal';
 import UpdateQuestionModal from '../components/modal/UpdateQuestionModal';
 import ViewQuestionModal from '../components/modal/ViewQuestionModal';
-import config from '../config';
 import { difficulties, topics } from '../constants/Question';
 import {
   AddQuestionInput,
   Question,
   UpdateQuestionInput,
 } from '../types/QuestionType';
-
-const API_BASE_URL = `${config.ROOT_BASE_API}api/questions`;
 
 function QuestionEditor() {
   const [
@@ -58,6 +46,7 @@ function QuestionEditor() {
   );
   const [filterDifficulty, setFilterDifficulty] = useState<string | null>(null);
   const [filterTopic, setFilterTopic] = useState<string[]>([]);
+  const navigate = useNavigate();
   // const [newImageFiles, setImageFiles] = useState<File[]>([]);
   // const [newImageNames, setImageNames] = useState<string[]>([]);
   // const [imageSrc, setImageSrc] = useState('');
@@ -67,14 +56,15 @@ function QuestionEditor() {
   }, []);
 
   const fetchQuestions = async () => {
-    const response = await fetch(`${API_BASE_URL}/all`);
-    if (!response.ok) {
-      const message = `An error occurred: ${response.statusText}`;
+    try {
+      const records = await getAllQuestions();
+      questionsHandlers.setState(records);
+    } catch (error: any) {
+      checkResponse(error, navigate);
+      const message = `An error occurred: ${error.message}`;
       console.error(message);
       return;
     }
-    const records = await response.json();
-    questionsHandlers.setState(records);
   };
 
   const isTitleUnique = (title: string, excludeId?: string) => {
@@ -127,24 +117,18 @@ function QuestionEditor() {
       });
       return;
     }
-
-    const response = await fetch(`${API_BASE_URL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    });
-    if (!response.ok) {
+    try {
+      const data = await createNewQuestion(values);
+      questionsHandlers.append(data);
+    } catch (error: any) {
+      checkResponse(error, navigate);
       notifications.show({
         title: 'Error',
-        message: 'Failed to add question.',
+        message: error.message || 'Failed to add question.',
         color: 'red',
       });
       throw new Error('Failed to add question');
     }
-    const data = await response.json();
-    questionsHandlers.append(data);
     closeAddQuestionModal();
     notifications.show({
       title: 'Success',
@@ -154,10 +138,16 @@ function QuestionEditor() {
   };
 
   const deleteQuestion = async (id: string) => {
-    const response = await fetch(`${API_BASE_URL}/${id}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) {
+    try {
+      await deleteQuestionById(id);
+      questionsHandlers.filter((item) => item.id !== id);
+      notifications.show({
+        title: 'Success',
+        message: 'Question deleted successfully.',
+        color: 'green',
+      });
+    } catch (error: any) {
+      checkResponse(error, navigate);
       notifications.show({
         title: 'Error',
         message: 'Failed to delete question.',
@@ -165,12 +155,6 @@ function QuestionEditor() {
       });
       throw new Error('Failed to delete question');
     }
-    questionsHandlers.filter((item) => item.id !== id);
-    notifications.show({
-      title: 'Success',
-      message: 'Question deleted successfully.',
-      color: 'green',
-    });
   };
 
   const updateQuestion = async (values: UpdateQuestionInput) => {
@@ -184,15 +168,20 @@ function QuestionEditor() {
       });
       return;
     }
-
-    const response = await fetch(`${API_BASE_URL}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    });
-    if (!response.ok) {
+    try {
+      const data = await updateQuestionById(id, values);
+      questionsHandlers.applyWhere(
+        (item) => item.id === id,
+        () => data,
+      );
+      closeUpdateQuestionModal();
+      notifications.show({
+        title: 'Success',
+        message: 'Question updated successfully.',
+        color: 'green',
+      });
+    } catch (error: any) {
+      checkResponse(error, navigate);
       notifications.show({
         title: 'Error',
         message: 'Failed to update question.',
@@ -200,17 +189,6 @@ function QuestionEditor() {
       });
       throw new Error('Failed to update question');
     }
-    const data = await response.json();
-    questionsHandlers.applyWhere(
-      (item) => item.id === id,
-      () => data,
-    );
-    closeUpdateQuestionModal();
-    notifications.show({
-      title: 'Success',
-      message: 'Question updated successfully.',
-      color: 'green',
-    });
   };
 
   const filteredQuestions = useMemo(() => {

@@ -5,8 +5,7 @@ services:
     container_name: nginx
     restart: always
     volumes:
-      - ./nginx:/tmp
-      - .env/.ssl_certs:/etc/letsencrypt/live/localhost
+      - .env/.ssl_certs:/etc/cloudflare/live
       - react-build:/app/dist
     environment:
       USER_SERVICE_ADDR: user-service:3001
@@ -19,8 +18,6 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    networks:
-      - my-network
     depends_on:
       - frontend
       - user-service
@@ -49,8 +46,6 @@ services:
       - match-notification-service
     volumes:
       - react-build:/app/dist
-    networks:
-      - my-network
     entrypoint: ['sh', '-c', 'npm run build && exit 0']
     env_file:
       - .env/.frontend_env
@@ -64,8 +59,6 @@ services:
       - .env/.global_auth_env
     depends_on:
       - user-service-mongo
-    networks:
-      - my-network
     volumes:
       - ./user-service:/app
       - /app/node_modules
@@ -75,25 +68,20 @@ services:
     image: mongo:4.2
     volumes:
       - mongo-data:/data/db
-    networks:
-      - my-network
 
   question-service:
     build:
       context: ./question-service
     container_name: question-service-backend
-    networks:
-      - my-network
     env_file:
       - .env/.question_env
+      - .env/.global_auth_env
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - my-network
     healthcheck:
       test: ['CMD', 'rabbitmqctl', 'status']
       interval: 10s
@@ -111,8 +99,6 @@ services:
         condition: service_healthy
       matching-service-redis:
         condition: service_healthy
-    networks:
-      - my-network
     env_file:
       - .env/.matching_env
 
@@ -120,8 +106,6 @@ services:
     build:
       context: ./match-notification-service
     container_name: match-notification-service
-    networks:
-      - my-network
     depends_on:
       rabbitmq:
         condition: service_healthy # Ensure notification service waits for RabbitMQ to be healthy
@@ -133,8 +117,6 @@ services:
     image: redis:latest
     volumes:
       - redis-data:/data/db
-    networks:
-      - my-network
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
@@ -145,8 +127,6 @@ services:
     build:
       context: ./communication-service
     container_name: communication-service-backend
-    networks:
-      - my-network
     env_file:
       - .env/.communication_env
       - .env/.global_auth_env
@@ -155,8 +135,6 @@ services:
     build:
       context: ./collaboration-service
     container_name: collaboration-service-backend
-    networks:
-      - my-network
     env_file:
       - .env/.collaboration_env
       - .env/.global_auth_env
@@ -165,8 +143,6 @@ services:
     build:
       context: ./history-service
     container_name: history-service
-    networks:
-      - my-network
     env_file:
       - .env/.history_env
       - .env/.global_auth_env
@@ -175,8 +151,6 @@ services:
     build:
       context: ./code-execution-service
     container_name: code-execution-service-backend
-    networks:
-      - my-network
     env_file:
       - .env/.code_execution_env
       - .env/.global_auth_env
@@ -186,7 +160,3 @@ volumes:
   react-build:
   rabbitmq_data:
   redis-data:
-
-networks:
-  my-network:
-    driver: bridge

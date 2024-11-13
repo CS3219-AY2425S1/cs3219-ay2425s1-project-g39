@@ -42,6 +42,7 @@ async function initRabbitMQ() {
   await channel.assertQueue('search_queue');
   await channel.assertQueue('match_found_queue');
   await channel.assertQueue('disconnect_queue');
+  await channel.assertQueue('error_queue');
 
   // Start listening for search requests
   channel.consume('search_queue', (msg) => {
@@ -86,7 +87,7 @@ async function showUserQueue(status) {
 }
 
 async function matchUsers(searchRequest) {
-  const { userId, difficulty, topics } = searchRequest;
+  const { userId, difficulty, topics, token } = searchRequest;
 
   await showUserQueue('Before queue');
 
@@ -100,14 +101,18 @@ async function matchUsers(searchRequest) {
   
   const { default: fetch } = await import('node-fetch');
 
-  const response = await fetch(`${QUESTION_API_BASE_URL}/filter-one`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ difficulties: difficulty, topics: topics }),
-    agent: agent,
-  });
+    const response = await fetch(`${QUESTION_API_BASE_URL}/filter-one`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        difficulties: difficulty,
+        topics: topics,
+      }),
+      agent: agent,
+    });
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);

@@ -5,9 +5,14 @@ function Header() {
   return (
     <AppShell.Header px="40px" pt="16px" bg="slate.9">
       <Group justify="space-between">
-        <a href="." className="logo">
-          <Title c="white">PeerPrep</Title>
-        </a>
+        <Group gap="48px">
+          <Link to="../dashboard">
+            <Title c="white">PeerPrep</Title>
+          </Link>
+          <Link to="../admin">
+            <Title c="white" fz="lg">Questions</Title>
+          </Link>
+        </Group>
         <Link to="../profile">
           <UnstyledButton>
             <Avatar
