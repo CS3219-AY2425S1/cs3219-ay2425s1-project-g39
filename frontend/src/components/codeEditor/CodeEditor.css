@@ -1,0 +1,21 @@
+.cm-editor {
+  height: 100%;
+}
+
+.cm-gutter {
+  background: var(--mantine-color-slate-9);
+}
+
+.cm-scroller {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  scrollbar-color: #727277 var(--mantine-color-slate-9);
+}
+
+.cm-focused {
+  outline: none !important;
+}

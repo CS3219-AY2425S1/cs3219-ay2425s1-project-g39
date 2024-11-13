@@ -1,0 +1,27 @@
+export const difficulties = ['Easy', 'Medium', 'Hard'];
+
+export const topics = [
+  'Array',
+  'Two Pointers',
+  'Sliding Window',
+  'Hash Table',
+  'Linked List',
+  'Doubly-Linked List',
+  'String',
+  'Math',
+  'Bit Manipulation',
+  'Recursion',
+  'Backtracking',
+  'Dynamic Programming',
+  'Greedy',
+  'Stack',
+  'Queue',
+  'Priority Queue',
+  'Graph',
+  'Matrix',
+  'Depth-First Search',
+  'Breadth-First Search',
+  'Topological Sort',
+  'Tree',
+  'Brainteaser',
+];

@@ -1,0 +1,162 @@
+services:
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    restart: always
+    volumes:
+      - .env/.ssl_certs:/etc/cloudflare/live
+      - react-build:/app/dist
+    environment:
+      USER_SERVICE_ADDR: user-service:3001
+      QUESTION_SERVICE_ADDR: question-service:8000
+      MATCH_NOTIFICATION_SERVICE_ADDR: match-notification-service:4001
+      HISTORY_SERVICE_ADDR: history-service:5001
+      COLLABORATION_SERVICE_ADDR: collaboration-service:8005
+      CODE_EXECUTION_SERVICE_ADDR: code-execution-service:8050
+      COMMUNICATION_SERVICE_ADDR: communication-service:8443
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - frontend
+      - user-service
+      - question-service
+      - matching-service
+      - match-notification-service
+      - history-service
+    env_file:
+      - .env/.nginx_env
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'curl --silent --fail --insecure https://localhost/health-check || exit 1',
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    command: /app/start.sh
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend-build
+    depends_on:
+      - match-notification-service
+    volumes:
+      - react-build:/app/dist
+    entrypoint: ['sh', '-c', 'npm run build && exit 0']
+    env_file:
+      - .env/.frontend_env
+
+  user-service:
+    build:
+      context: ./user-service
+    container_name: user-service-backend
+    env_file:
+      - .env/.user_env
+      - .env/.global_auth_env
+    depends_on:
+      - user-service-mongo
+    volumes:
+      - ./user-service:/app
+      - /app/node_modules
+
+  user-service-mongo:
+    container_name: user-service-mongo-test
+    image: mongo:4.2
+    volumes:
+      - mongo-data:/data/db
+
+  question-service:
+    build:
+      context: ./question-service
+    container_name: question-service-backend
+    env_file:
+      - .env/.question_env
+      - .env/.global_auth_env
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'status']
+      interval: 10s
+      timeout: 5s
+      retries: 5 # Adjust based on how long it takes for RabbitMQ to be ready
+    env_file:
+      - .env/.rabbitmq_env
+
+  matching-service:
+    build:
+      context: ./matching-service
+    container_name: matching-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      matching-service-redis:
+        condition: service_healthy
+    env_file:
+      - .env/.matching_env
+
+  match-notification-service:
+    build:
+      context: ./match-notification-service
+    container_name: match-notification-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy # Ensure notification service waits for RabbitMQ to be healthy
+    env_file:
+      - .env/.notification_env
+
+  matching-service-redis:
+    container_name: matching-service-redis
+    image: redis:latest
+    volumes:
+      - redis-data:/data/db
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5 # Adjust based on how long it takes for RabbitMQ to be ready
+
+  communication-service:
+    build:
+      context: ./communication-service
+    container_name: communication-service-backend
+    env_file:
+      - .env/.communication_env
+      - .env/.global_auth_env
+
+  collaboration-service:
+    build:
+      context: ./collaboration-service
+    container_name: collaboration-service-backend
+    env_file:
+      - .env/.collaboration_env
+      - .env/.global_auth_env
+
+  history-service:
+    build:
+      context: ./history-service
+    container_name: history-service
+    env_file:
+      - .env/.history_env
+      - .env/.global_auth_env
+
+  code-execution-service:
+    build:
+      context: ./code-execution-service
+    container_name: code-execution-service-backend
+    env_file:
+      - .env/.code_execution_env
+      - .env/.global_auth_env
+
+volumes:
+  mongo-data:
+  react-build:
+  rabbitmq_data:
+  redis-data:

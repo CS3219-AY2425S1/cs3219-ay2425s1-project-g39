@@ -1,0 +1,28 @@
+{
+  "name": "peerprep",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "install-all": "npm install && run-p install-all:*",
+    "install-all:frontend": "cd frontend && npm install",
+    "install-all:question-service": "cd question-service && npm install",
+    "install-all:user-service": "cd user-service && npm install"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.36.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.9.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.5.0"
+  },
+  "dependencies": {
+    "redis": "^4.7.0"
+  }
+}

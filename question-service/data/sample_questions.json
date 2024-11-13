@@ -1,0 +1,377 @@
+[
+  {
+    "id": 1,
+    "title": "Linked List Cycle",
+    "description": "Given <code>head</code>, the head of a linked list, determine if the linked list has a cycle in it.<br /><br />\n\nThere is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the <code>next</code> pointer. Internally, <code>pos</code> is used to denote the index of the node that tail's <code>next</code> pointer is connected to. <b>Note that <code>pos</code> is not passed as a parameter.</b><br /><br />\n\nReturn <code>true</code> <i>if there is a cycle in the linked list</i>. Otherwise, return <code>false</code>.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>head = [3,2,0,-4], pos = 1</code><br />\nOutput: <code>true</code><br />\nExplanation: <code>There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>head = [1,2], pos = 0</code><br />\nOutput: <code>true</code><br />\nExplanation: <code>There is a cycle in the linked list, where the tail connects to the 0th node.</code><br /><br />\n\n<b>Example 3:</b><br />\nInput: <code>head = [1], pos = -1</code><br />\nOutput: <code>false</code><br />\nExplanation: <code>There is no cycle in the linked list.</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the number of nodes in the linked list <code>n</code>. The second line of the input contains <code>n</code> integers representing the value stored in the nodes of the linked list starting from the head. The third line of the input represents <code>p</code>, the index of the node that the tail's <code>next</code> pointer is connected to.<br /><br />\n\n<b>Output:</b><br />\nA boolean.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li>The number of the nodes in the list is in the range <code>[0, 10^4]</code>.</li>\n  <li><code>-10^5 <= Node.val <= 10^5</code></li>\n  <li><code>pos</code> is <code>-1</code> or a <b>valid index</b> in the linked-list.</li>\n</ul><br />\n\n<b>Follow up:</b> Can you solve it using <code>O(1)</code> (i.e. constant) memory?",
+    "topics": ["Hash Table", "Linked List", "Two Pointers"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "4\n3 2 0 -4\n1",
+        "answer": "true"
+      },
+      {
+        "input": "2\n1 2\n0",
+        "answer": "true"
+      },
+      {
+        "input": "1\n1\n-1",
+        "answer": "false"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Roman to Integer",
+    "description": "Roman numerals are represented by seven different symbols: <code>I</code>, <code>V</code>, <code>X</code>, <code>L</code>, <code>C</code>, <code>D</code> and <code>M</code>.\n<ul>\n  <li><code>I -> 1</code></li>\n  <li><code>V -> 5</code></li>\n  <li><code>X -> 10</code></li>\n  <li><code>L -> 50</code></li>\n  <li><code>C -> 100</code></li>\n  <li><code>D -> 500</code></li>\n  <li><code>M -> 1000</code></li>\n</ul>\nFor example, <code>2</code> is written as <code>II</code> in Roman numeral, just two ones added together. <code>12</code> is written as <code>XII</code>, which is simply <code>X + II</code>. The number <code>27</code> is written as <code>XXVII</code>, which is <code>XX + V + II</code>.<br /><br />\n\nRoman numerals are usually written largest to smallest from left to right. However, the numeral for four is not <code>IIII</code>. Instead, the number four is written as <code>IV</code>. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written as <code>IX</code>. There are six instances where subtraction is used:\n<ul>\n  <li><code>I</code> can be placed before <code>V</code> (5) and <code>X</code> (10) to make 4 and 9.</li>\n  <li><code>X</code> can be placed before <code>L</code> (50) and <code>C</code> (100) to make 40 and 90.</li>\n  <li><code>C</code> can be placed before <code>D</code> (500) and <code>M</code> (1000) to make 400 and 900.</li>\n</ul>\nGiven a roman numeral, convert it to an integer.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>s = \"III\"</code><br />\nOutput: <code>3</code><br />\nExplanation: <code>III = 3.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>s = \"LVIII\"</code><br />\nOutput: <code>58</code><br />\nExplanation: <code>L = 50, V= 5, III = 3.</code><br /><br />\n\n<b>Example 3:</b><br />\nInput: <code>s = \"MCMXCIV\"</code><br />\nOutput: <code>1994</code><br />\nExplanation: <code>M = 1000, CM = 900, XC = 90 and IV = 4.</code><br /><br />\n\n<b>Input:</b><br />\nA string representing the roman numeral.<br /><br />\n\n<b>Output:</b><br />\nAn integer.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= s.length <= 15</code></li>\n  <li><code>s</code> contains only the characters <code>('I', 'V', 'X', 'L', 'C', 'D', 'M')</code>.</li>\n  <li>It is <b>guaranteed</b> that <code>s</code> is a valid roman numeral in the range <code>[1, 3999]</code>.\n</li>\n</ul>",
+    "topics": ["Hash Table", "Math", "String"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "III",
+        "answer": "3"
+      },
+      {
+        "input": "XIV",
+        "answer": "14"
+      },
+      {
+        "input": "XXIX",
+        "answer": "29"
+      },
+      {
+        "input": "LXXXIV",
+        "answer": "84"
+      },
+      {
+        "input": "MCMXCIV",
+        "answer": "1994"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Fibonacci Number",
+    "description": "The <b>Fibonacci numbers</b>, commonly denoted <code>F(n)</code> form a sequence, called the Fibonacci sequence, such that each number is the sum of the two preceding ones, starting from <code>0</code> and <code>1</code>. That is,<br />\n<code>F(0) = 0, F(1) = 1</code><br />\n<code>F(n) = F(n - 1) + F(n - 2), for n > 1.</code><br /><br />\n\nGiven <code>n</code>, calculate <code>F(n)</code>.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>n = 2</code><br />\nOutput: <code>1</code><br />\nExplanation: <code>F(2) = F(1) + F(0) = 1 + 0 = 1.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>n = 3</code><br />\nOutput: <code>2</code><br />\nExplanation: <code>F(3) = F(2) + F(1) = 1 + 1 = 2.</code><br /><br />\n\n<b>Input:</b><br />\nThe integer <code>n</code>.<br /><br />\n\n<b>Output:</b><br />\nA number.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>0 <= n <= 30</code></li>\n</ul>",
+    "topics": ["Math", "Recursion", "Dynamic Programming"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "2",
+        "answer": "1"
+      },
+      {
+        "input": "4",
+        "answer": "3"
+      },
+      {
+        "input": "6",
+        "answer": "8"
+      },
+      {
+        "input": "10",
+        "answer": "55"
+      },
+      {
+        "input": "20",
+        "answer": "6765"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Implement Stack using Queues",
+    "description": "Implement a last-in-first-out (LIFO) stack using only two queues. The implemented stack should support all the functions of a normal stack (<code>push</code>, <code>top</code>, <code>pop</code>, and <code>empty</code>).<br /><br />\n\nImplement the <code>MyStack</code> class:<br />\n<ul>\n  <li><code>void push(int x)</code> Pushes element x to the top of the stack.</li>\n  <li><code>int pop()</code> Removes the element on the top of the stack and returns it.</li>\n  <li><code>int top()</code> Returns the element on the top of the stack.</li>\n  <li><code>boolean empty()</code> Returns <code>true</code> if the stack is empty, <code>false</code> otherwise.</li>\n</ul><br />\n\n<b>Notes:</b><br />\n<ul>\n  <li>You must use only standard operations of a queue, which means that only <code>push to back</code>, <code>peek/pop from front</code>, <code>size</code> and <code>is empty</code> operations are valid.</li>\n  <li>Depending on your language, the queue may not be supported natively. You may simulate a queue using a list or deque (double-ended queue) as long as you use only a queue's standard operations.</li>\n</ul><br />\n\n<b>Example 1:</b><br />\nInput<br />\n<code>[\"MyStack\", \"push\", \"push\", \"top\", \"pop\", \"empty\"]</code><br />\n<code>[[], [1], [2], [], [], []]</code><br />\nOutput:<br />\n<code>[null, null, null, 2, 2, false]</code><br /><br />\n\nExplanation:<br />\n<code>MyStack myStack = new MyStack();</code><br />\n<code>myStack.push(1);</code><br />\n<code>myStack.push(2);</code><br />\n<code>myStack.top(); // return 2</code><br />\n<code>myStack.pop(); // return 2</code><br />\n<code>myStack.empty(); // return False</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents a number <code>n</code>, which is the the number of actions. The subsequent <code>n</code> lines represent <code>n</code> actions. Each action is a line containing <code>init</code>, <code>top</code>, <code>pop</code>, <code>empty</code>, or <code>push i</code>, where <code>i</code> is an integer.<br /><br />\n\n<b>Output:</b><br />\nA line for each action needing output, with their respective content, in the right order.<br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents a number <code>n</code>, which is the the number of actions. The subsequent <code>n</code> lines represent <code>n</code> actions. Each action is a line containing <code>init</code>, <code>put x y</code>, or <code>get x</code>, where <code>x</code> and <code>y</code> are integers.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= x <= 9</code></li>\n  <li>At most <code>100</code> calls will be made to <code>push</code>, <code>pop</code>, <code>top</code>, and <code>empty</code>.</li>\n  <li>All the calls to <code>pop</code> and <code>top</code> are valid.</li>\n</ul><br />\n\n<b>Follow up:</b> Can you implement the stack using only one queue?",
+    "topics": ["Stack", "Queue"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "6 \ninit\npush 1\npush 2\ntop\npop\nempty",
+        "answer": "2\n2\nfalse"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Repeated DNA Sequences",
+    "description": "The DNA sequence is composed of a series of nucleotides abbreviated as <code>'A'</code>, <code>'C'</code>, <code>'G'</code>, and <code>'T'</code>.<br /><br />\n\nFor example, <code>\"ACGAATTCCG\"</code> is a DNA sequence.<br /><br />\n\nWhen studying DNA, it is useful to identify repeated sequences within the DNA.<br /><br />\n\nGiven a string <code>s</code> that represents a DNA sequence, return all the <code>10</code>-letter-long sequences (substrings) that occur more than once in a DNA molecule. You may return the answer in any order.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>s = \"AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT\"</code><br />\nOutput: <code>[\"AAAAACCCCC\",\"CCCCCAAAAA\"]</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>s = \"AAAAAAAAAAAAA\"</code><br />\nOutput: <code>[\"AAAAAAAAAA\"]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of input represents <code>s</code>.<br /><br />\n\n<b>Output:</b><br />\nSubstrings in separate lines.<br /><br />\n \n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= s.length <= 10^5</code></li>\n  <li><code>s[i]</code> is either <code>'A'</code>, <code>'C'</code>, <code>'G'</code>, or <code>'T'</code>.</li>\n</ul>",
+    "topics": ["Hash Table", "String", "Bit Manipulation", "Sliding Window"],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT",
+        "answer": "AAAAACCCCC\nCCCCCAAAAA"
+      },
+      {
+        "input": "AAAAAAAAAAAAA",
+        "answer": "AAAAAAAAAA"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Course Schedule",
+    "description": "There are a total of <code>numCourses</code> courses you have to take, labeled from <code>0</code> to <code>numCourses - 1</code>. You are given an array <code>prerequisites</code> where <code>prerequisites[i] = [a_i, b_i]</code> indicates that you must take course <code>b_i</code> first if you want to take course <code>a_i</code>.<br /><br />\n\nFor example, the pair <code>[0, 1]</code>, indicates that to take course <code>0</code> you have to first take course <code>1</code>.<br /><br />\n\nReturn <code>true</code> if you can finish all courses. Otherwise, return <code>false</code>.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>numCourses = 2, prerequisites = [[1,0]]</code><br />\nOutput: <code>true</code><br />\nExplanation: <code>There are a total of 2 courses to take. \nTo take course 1 you should have finished course 0. So it is possible.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>numCourses = 2, prerequisites = [[1,0],[0,1]]</code><br />\nOutput: <code>false</code><br />\nExplanation: <code>There are a total of 2 courses to take. \nTo take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents <code>numCourses</code>. The second line of the input represents the number of prerequisites <code>n</code>. The subsequent <code>n</code> lines represent each prerequisite in the form of integer pairs <code>a</code> and <code>b</code>.<br /><br />\n\n<b>Output:</b><br />\nA boolean.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= numCourses <= 2000</code></li>\n  <li><code>0 <= prerequisites.length <= 5000</code></li>\n  <li><code>prerequisites[i].length == 2</code></li>\n  <li><code>0 <= a_i, b_i < numCourses</code></li>\n  <li>All the pairs <code>prerequisites[i]</code> are unique.</li>\n</ul>",
+    "topics": [
+      "Depth-First Search",
+      "Breadth-First Search",
+      "Graph",
+      "Topological Sort"
+    ],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "2\n1\n1 0",
+        "answer": "true"
+      },
+      {
+        "input": "2\n2\n1 0\n0 1",
+        "answer": "false"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "LRU Cache",
+    "description": "Design a data structure that follows the constraints of a <a href=\"https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU\" target=\"_blank\">Least Recently Used (LRU) cache.</a><br /><br />\n\nImplement the <code>LRUCache</code> class:\n<ul>\n  <li><code>LRUCache(int capacity)</code> Initialize the LRU cache with <b>positive</b> size <code>capacity</code>.</li>\n  <li><code>int get(int key)</code> Return the value of the <code>key</code> if the key exists, otherwise return <code>-1</code>.</li>\n  <li><code>void put(int key, int value)</code> Update the value of the <code>key</code> if the <code>key</code> exists. Otherwise, add the key-value pair to the cache. If the number of keys exceeds the <code>capacity</code> from this operation, <b>evict</b> the least recently used key.</li>\n</ul>\nThe functions <code>get</code> and <code>put</code> must each run in <code>O(1)</code> average time complexity.<br /><br />\n\n<b>Example 1:</b><br />\nInput<br />\n<code>[\"LRUCache\", \"put\", \"put\", \"get\", \"put\", \"get\", \"put\", \"get\", \"get\", \"get\"]</code><br />\n<code>[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]</code><br />\nOutput:<br />\n<code>[null, null, null, 1, null, -1, null, -1, 3, 4]</code><br /><br />\n\nExplanation:<br />\n<code>LRUCache lRUCache = new LRUCache(2);</code><br />\n<code>lRUCache.put(1, 1); // cache is {1=1}</code><br />\n<code>lRUCache.put(2, 2); // cache is {1=1, 2=2}</code><br />\n<code>lRUCache.get(1);    // return 1</code><br />\n<code>lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}</code><br />\n<code>lRUCache.get(2);    // returns -1 (not found)</code><br />\n<code>lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}</code><br />\n<code>lRUCache.get(1);    // return -1 (not found)</code><br />\n<code>lRUCache.get(3);    // return 3</code><br />\n<code>lRUCache.get(4);    // return 4</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents a number <code>n</code>, which is the the number of actions. The subsequent <code>n</code> lines represent <code>n</code> actions. Each action is a line containing <code>init x</code>, <code>put x y</code>, or <code>get x</code>, where <code>x</code> and <code>y</code> are integers.<br /><br />\n\n<b>Output:</b><br />\nA line for each action needing output, with their respective content, in the right order.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= capacity <= 3000</code></li>\n  <li><code>0 <= key <= 104</code></li>\n  <li><code>0 <= value <= 105</code></li>\n\n  <li>At most <code>2 * 10^5</code> calls will be made to <code>get</code> and <code>put</code>.</li>\n</ul>",
+    "topics": ["Hash Table", "Linked List", "Doubly-Linked List"],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "10 init 2\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nput 4 4\nget 1\nget 3\nget 4",
+        "answer": "1\n-1\n-1\n3\n4"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Longest Common Subsequence",
+    "description": "Given two strings <code>text1</code> and <code>text2</code>, return <i>the length of their longest <b>common subsequence</b></i>. If there is no <b>common subsequence</b>, return <code>0</code>.<br /><br />\n\nA <b>subsequence</b> of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters.<br /><br />\n\nFor example, <code>\"ace\"</code> is a subsequence of <code>\"abcde\"</code>.<br /><br />\n\nA <b>common subsequence</b> of two strings is a subsequence that is common to both strings.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>text1 = \"abcde\", text2 = \"ace\" </code><br />\nOutput: <code>3</code><br />\nExplanation: <code>The longest common subsequence is \"ace\" and its length is 3.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>text1 = \"abc\", text2 = \"abc\"</code><br />\nOutput: <code>3</code><br />\nExplanation: <code>The longest common subsequence is \"abc\" and its length is 3.</code><br /><br />\n\n<b>Example 3:</b><br />\nInput: <code>text1 = \"abc\", text2 = \"def\"</code><br />\nOutput: <code>0</code><br />\nExplanation: <code>There is no such common subsequence, so the result is 0.</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents <code>text1</code>. The second line of the input represents <code>text2</code>.<br /><br />\n\n<b>Output:</b><br />\nA number.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= text1.length, text2.length <= 1000</code></li>\n  <li><code>text1</code> and <code>text2</code> consist of only lowercase English characters.</li>\n</ul>",
+    "topics": ["String", "Dynamic Programming"],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "abcde\nace",
+        "answer": "3"
+      },
+      {
+        "input": "abc\nabc",
+        "answer": "3"
+      },
+      {
+        "input": "abc\ndef",
+        "answer": "0"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Rotate Image",
+    "description": "You are given an <code>n x n</code> 2D <code>matrix</code> representing an image, rotate the image by <b>90</b> degrees (clockwise).<br /><br />\n\nYou have to rotate the image <a href=\"https://en.wikipedia.org/wiki/In-place_algorithm\" target=\"_blank\">in-place</a>, which means you have to modify the input 2D matrix directly. <b>DO NOT</b> allocate another 2D matrix and do the rotation.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>matrix = [[1,2,3],[4,5,6],[7,8,9]]</code><br />\nOutput: <code>[[7,4,1],[8,5,2],[9,6,3]]</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]]</code><br />\nOutput: <code>[[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents <code>n</code>. The subsequent <code>n</code> lines represent the values of each row in the 2D matrix.<br /><br />\n\n<b>Output:</b><br />\n<code>n</code> lines representing 2D matrix values.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>n == matrix.length == matrix[i].length</code></li>\n  <li><code>1 <= n <= 20</code></li>\n  <li><code>-1000 <= matrix[i][j] <= 1000</code></li>\n</ul>",
+    "topics": ["Array", "Math", "Matrix"],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "3\n1 2 3\n4 5 6\n7 8 9",
+        "answer": "7 4 1\n8 5 2\n9 6 3"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Airplane Seat Assignment Probability",
+    "description": "<code>n</code> passengers board an airplane with exactly <code>n</code> seats. The first passenger has lost the ticket and picks a seat randomly. But after that, the rest of the passengers will:<br />\n\n<ul>\n  <li>Take their own seat if it is still available, and</li>\n  <li>Pick other seats randomly when they find their seat occupied</li>\n</ul><br />\n\nReturn the <i>probability that the <code>n</code>-th person gets his own seat</i>.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>n = 1</code><br />\nOutput: <code>1.00000</code><br />\nExplanation: <code>The first person can only get the first seat.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>n = 2</code><br />\nOutput: <code>0.50000</code><br />\nExplanation: <code>The second person has a probability of 0.5 to get the second seat (when first person gets the first seat).</code><br /><br />\n\n<b>Input:</b><br />\nA number representing <code>n</code>.<br /><br />\n\n<b>Output:</b><br />\nA float with 5 decimal points.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= n <= 10^5</code></li>\n</ul>",
+    "topics": ["Brainteaser", "Math", "Dynamic Programming"],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "1",
+        "answer": "1.00000"
+      },
+      {
+        "input": "2",
+        "answer": "0.50000"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Validate Binary Search Tree",
+    "description": "Given the <code>root</code> of a binary tree, determine <i>if it is a valid binary search tree (BST)</i>.<br /><br />\n\nA valid BST is defined as follows:\n<ul>\n  <li>The left subtree of a node contains only nodes with keys <b>less than</b> the node's key.</li>\n  <li>The right subtree of a node contains only nodes with keys <b>greater than</b> the node's key.</li>\n  <li>Both the left and right subtrees must also be binary search trees.</li>\n</ul><br />\n\n<b>Example 1:</b><br />\nInput: <code>root = [2,1,3]</code><br />\nOutput: <code>true</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>root = [5,1,4,null,null,3,6]</code><br />\nOutput: <code>false</code><br />\nExplanation: <code>The root node's value is 5 but its right child's value is 4.</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the values of the binary tree. The values start from the root, then continues using top-to-down and left-to-right traversal. <code>null</code> indicates that there is no node.<br /><br />\n\n<b>Output:</b><br />\nA boolean.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li>The number of nodes in the tree is in the range <code>[1, 10^4]</code>.</li>\n  <li><code>-231 <= Node.val <= 231 - 1</code></li>\n</ul>",
+    "topics": ["Tree", "Depth-First Search"],
+    "difficulty": "Medium",
+    "images": [],
+    "testCases": [
+      {
+        "input": "2 1 3",
+        "answer": "true"
+      },
+      {
+        "input": "5 1 4 null null 3 6",
+        "answer": "false"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Sliding Window Maximum",
+    "description": "You are given an array of integers <code>nums</code>, there is a sliding window of size <code>k</code> which is moving from the very left of the array to the very right. You can only see the <code>k</code> numbers in the window. Each time the sliding window moves right by one position.<br /><br />\n\nReturn the max sliding window.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>nums = [1,3,-1,-3,5,3,6,7], k = 3</code><br />\nOutput: <code>[3,3,5,5,6,7]</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>nums = [1], k = 1</code><br />\nOutput: <code>[1]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the length of <code>nums</code>. The second line of the input represents the values of <code>nums</code>. The third line of the input is a single number representing <code>k</code>.<br /><br />\n\n<b>Output:</b><br />\nSpace-separated numbers.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= nums.length <= 10^5</code></li>\n  <li><code>-10^4 <= nums[i] <= 10^4</code></li>\n  <li><code>1 <= k <= nums.length</code></li>\n</ul>",
+    "topics": ["Array", "Queue", "Sliding Window", "Priority Queue"],
+    "difficulty": "Hard",
+    "images": [],
+    "testCases": [
+      {
+        "input": "8\n1 3 -1 -3 5 3 6 7\n3",
+        "answer": "3 3 5 5 6 7"
+      },
+      {
+        "input": "1\n1\n1",
+        "answer": "1"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "N-Queens",
+    "description": "The <b>n-queens</b> puzzle is the problem of placing <code>n</code> queens on an <code>n x n</code> chessboard such that no two queens attack each other.<br /><br />\n\nGiven an integer <code>n</code>, return <i>all distinct solutions</i> to the <b>n-queens puzzle</b>. You may return the answer in any order.<br /><br />\n\nEach solution contains a distinct board configuration of the n-queens' placement, where <code>'Q'</code> and <code>'.'</code> both indicate a queen and an empty space, respectively.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>n = 4</code><br />\nOutput: <code>[[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]</code><br />\nExplanation: <code>There exist two distinct solutions to the 4-queens puzzle as shown above.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>n = 1</code><br />\nOutput: <code>[[\"Q\"]]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input is a single number representing <code>n</code>.<br /><br />\n\n<b>Output:</b><br />\n2D array.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= n <= 9</code></li>\n</ul>",
+    "topics": ["Array", "Backtracking"],
+    "difficulty": "Hard",
+    "images": [],
+    "testCases": [
+      {
+        "input": "4",
+        "answer": "[[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Serialize and Deserialize Binary Tree",
+    "description": "Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.<br /><br />\n\nDesign an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.<br /><br />\n\n<b>Clarification:</b> The input/output format is the same as <a href=\"https://support.leetcode.com/hc/en-us/articles/32442719377939-How-to-create-test-cases-on-LeetCode#h_01J5EGREAW3NAEJ14XC07GRW1A\" target=\"_blank\">how LeetCode serializes a binary tree</a>. You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>root = [1,2,3,null,null,4,5]</code><br />\nOutput: <code>[1,2,3,null,null,4,5]</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>root = []</code><br />\nOutput: <code>[]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the values of the binary tree. The values start from the root, then continues using top-to-down and left-to-right traversal. <code>null</code> indicates that there is no node.<br /><br />\n\n<b>Output:</b><br />\nSpace-separated values representing output binary tree. The traversal order follows the input.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li>The number of nodes in the tree is in the range <code>[0, 10^4]</code>.</li>\n  <li><code>-1000 <= Node.val <= 1000</code></li>\n</ul>",
+    "topics": ["String", "Tree", "Depth-First Search", "Breadth-First Search"],
+    "difficulty": "Hard",
+    "images": [],
+    "testCases": [
+      {
+        "input": "1 2 3 null null 4 5",
+        "answer": "1 2 3 null null 4 5"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Wildcard Matching",
+    "description": "Given an input string (<code>s</code>) and a pattern (<code>p</code>), implement wildcard pattern matching with support for <code>'?'</code> and <code>'*'</code> where:\n<ul>\n  <li><code>'?'</code> Matches any single character.</li>\n  <li><code>'*'</code> Matches any sequence of characters (including the empty sequence).</li>\n</ul>\nThe matching should cover the <b>entire</b> input string (not partial).<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>s = \"aa\", p = \"a\"</code><br />\nOutput: <code>false</code><br />\nExplanation: <code>\"a\" does not match the entire string \"aa\".</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>s = \"aa\", p = \"*\"</code><br />\nOutput: <code>true</code><br />\nExplanation: <code>'*' matches any sequence.</code><br /><br />\n\n<b>Example 3:</b><br />\nInput: <code>s = \"cb\", p = \"?a\"</code><br />\nOutput: <code>false</code><br />\nExplanation: <code>'?' matches 'c', but the second letter is 'a', which does not match 'b'.</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the input string <code>s</code>. The second line of the input represents the pattern string <code>p</code>.<br /><br />\n\n<b>Output:</b><br />\nA boolean.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>0 <= s.length, p.length <= 2000</code></li>\n  <li><code>s</code> contains only lowercase English letters.</li>\n  <li><code>p</code> contains only lowercase English letters, <code>'?'</code> or <code>'*'</code>.</li>\n</ul>",
+    "topics": ["String", "Dynamic Programming", "Greedy", "Recursion"],
+    "difficulty": "Hard",
+    "images": [],
+    "testCases": [
+      {
+        "input": "aa\na",
+        "answer": "false"
+      },
+      {
+        "input": "aa\n*",
+        "answer": "true"
+      },
+      {
+        "input": "cb\n?a",
+        "answer": "false"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Chalkboard XOR Game",
+    "description": "You are given an array of integers <code>nums</code> represents the numbers written on a chalkboard.<br /><br />\n\nAlice and Bob take turns erasing exactly one number from the chalkboard, with Alice starting first. If erasing a number causes the bitwise XOR of all the elements of the chalkboard to become <code>0</code>, then that player loses. The bitwise XOR of one element is that element itself, and the bitwise XOR of no elements is <code>0</code>.<br /><br />\n\nAlso, if any player starts their turn with the bitwise XOR of all the elements of the chalkboard equal to <code>0</code>, then that player wins.<br /><br />\n\nReturn <code>true</code> <i>if and only if Alice wins the game, assuming both players play optimally</i>.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>nums = [1,1,2]</code><br />\nOutput: <code>false</code><br />\nExplanation: <code>Alice has two choices: erase 1 or erase 2. If she erases 1, the nums array becomes [1, 2]. The bitwise XOR of all the elements of the chalkboard is 1 XOR 2 = 3. Now Bob can remove any element he wants, because Alice will be the one to erase the last element and she will lose. If Alice erases 2 first, now nums become [1, 1]. The bitwise XOR of all the elements of the chalkboard is 1 XOR 1 = 0. Alice will lose.</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>nums = [0,1]</code><br />\nOutput: <code>true</code><br /><br />\n\n<b>Example 3:</b><br />\nInput: <code>nums = [1,2,3]</code><br />\nOutput: <code>true</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the length of <code>nums</code>. The second line of the input represents the values of <code>nums</code>. <br /><br />\n\n<b>Output:</b><br />\nA boolean.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>1 <= nums.length <= 1000</code></li>\n  <li><code>0 <= nums[i] < 2^16</code></li>\n</ul>",
+    "topics": ["Brainteaser", "Array", "Math", "Bit Manipulation"],
+    "difficulty": "Hard",
+    "images": [],
+    "testCases": [
+      {
+        "input": "3\n1 1 2",
+        "answer": "false"
+      },
+      {
+        "input": "2\n0 1",
+        "answer": "true"
+      },
+      {
+        "input": "3\n1 2 3",
+        "answer": "true"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "title": "Two Sum",
+    "description": "Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers such that they add up to <code>target</code>.<br /><br />\n\nYou may assume that each input would have <b>exactly one solution</b>, and you may not use the <i>same</i> element twice.<br /><br />\n          \nYou can return the answer in any order.<br /><br />\n\n<b>Example 1:</b><br />\n\nInput: <code>nums = [2,7,11,15], target = 0</code><br />\nOutput: <code>[0,1]</code><br />\nExplanation: <code>Because nums[0] + nums[1] == 9, we return [0,1].</code><br /><br />\n\n<b>Example 2:</b><br />\n\nInput: <code>nums = [3,2,4], target = 6</code><br />\nOutput: <code>[1,2]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the length of <code>nums</code>. The second line of the input represents the values of <code>nums</code>. The third line of the input is a single number representing the <code>target</code>.<br /><br />\n\n<b>Output:</b><br />\nTwo numbers.<br /><br />\n\n<b>Constraints:</b>\n<ul>\n  <li><code>2 <= nums.length <= 10^4</code></li>\n  <li><code>-10^9 <= nums[i] <= 10^9</code></li>\n  <li><code>-10^9 <= target <= 10^9</code></li>\n  <li><b>Only one valid answer exists.</b></li>\n</ul>",
+    "topics": ["Array"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "4\n2 7 11 15\n9",
+        "answer": "0 1"
+      },
+      {
+        "input": "3\n3 2 4\n6",
+        "answer": "1 2"
+      },
+      {
+        "input": "2\n3 3\n6",
+        "answer": "0 1"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "title": "Reverse String",
+    "description": "Write a function that reverses a string. The input string is given as an array of characters <code>s</code>.<br /><br />\n\nYou must do this by modifying the input array in-place with <code>O(1)</code> extra memory.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>s = [\"h\",\"e\",\"l\",\"l\",\"o\"]</code><br />\nOutput: <code>[\"o\",\"l\",\"l\",\"e\",\"h\"]</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>s = [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]</code><br />\nOutput: <code>[\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input represents the array of characters to reverse.<br /><br />\n\n<b>Output:</b><br />\nSpace-separated characters.<br /><br />\n\n<b>Constraints:</b><br />\n<ul>\n  <li><code>1 <= s.length <= 10^5</code></li>\n  <li><code>s[i]</code> is a printable ascii character.</li>\n</ul>",
+    "topics": ["Two Pointers", "String"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "h e l l o",
+        "answer": "o l l e h"
+      },
+      {
+        "input": "H a n n a h",
+        "answer": "h a n n a H"
+      },
+      {
+        "input": "3 3\n6",
+        "answer": "0 1"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "title": "Add Binary",
+    "description": "Given two binary strings <code>a</code> and <code>b</code>, return <i>their sum as a binary string</i>.<br /><br />\n\n<b>Example 1:</b><br />\nInput: <code>a = \"11\", b = \"1\"</code><br />\nOutput: <code>\"100\"</code><br /><br />\n\n<b>Example 2:</b><br />\nInput: <code>a = \"1010\", b = \"1011\"</code><br />\nOutput: <code>\"10101\"</code><br /><br />\n\n<b>Input:</b><br />\nThe first line of the input contains the first binary string. The second line of the input contains the second binary string.<br /><br />\n\n<b>Output:</b><br />\nA string.<br /><br />\n\n<b>Constraints:</b><br />\n<ul>\n  <li><code>1 <= a.length, b.length <= 10^4</code></li>\n  <li><code>a</code> and <code>b</code> consist only of <code>'0'</code> or <code>'1'</code> characters.</li>\n  <li>Each string does not contain leading zeros except for the zero itself.</li>\n</ul> ",
+    "topics": ["Math", "String", "Bit Manipulation"],
+    "difficulty": "Easy",
+    "images": [],
+    "testCases": [
+      {
+        "input": "11\n1",
+        "answer": "100"
+      },
+      {
+        "input": "1010\n1011",
+        "answer": "10101"
+      }
+    ]
+  }
+]
