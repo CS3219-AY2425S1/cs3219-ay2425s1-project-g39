@@ -3,8 +3,6 @@ import {
   Avatar,
   Button,
   Container,
-  Group,
-  Paper,
   Stack,
   Text,
   Title,
@@ -65,33 +63,37 @@ function Profile() {
           bg="slate.9"
           style={{ overflowY: 'auto' }}
         >
-          <Container size="sm" py="xl">
-            <Paper shadow="md" p="xl" withBorder>
-              <Group justify="center" mb="xl">
-                <Title order={2}>{username}</Title>
-                <Avatar
-                  src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
-                  radius="xl"
-                />
-                <Button onClick={openEditModal}>Edit Profile</Button>
-              </Group>
+          <Container size="sm">
+            <Stack
+              align="stretch"
+              bg="slate.8"
+              p="20px"
+              gap="20px"
+              style={{ borderRadius: '4px' }}
+            >
+              <Avatar
+                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+                size="lg"
+                style={{ alignSelf: 'center' }}
+              />
 
               <Stack justify="md">
-                <Paper withBorder p="md">
-                  <Title order={4} mb="xs">
-                    Email
-                  </Title>
-                  <Text>{email}</Text>
-                </Paper>
-                <Paper withBorder p="md">
-                  <Title order={4} mb="xs">
-                    Last Login
-                  </Title>
-                  <Text>{new Date(lastLogin).toLocaleString()}</Text>
-                </Paper>
-                <Button onClick={handleLogoutAction}>Log Out</Button>
+                <Title order={4}>Username</Title>
+                <Text>{username}</Text>
+                <Title order={4}>Email</Title>
+                <Text>{email}</Text>
+                <Title order={4}>Last Login</Title>
+                <Text>{new Date(lastLogin).toLocaleString()}</Text>
+                <Button onClick={openEditModal}>Edit Profile</Button>
+                <Button
+                  variant="light"
+                  color="red"
+                  onClick={handleLogoutAction}
+                >
+                  Log Out
+                </Button>
               </Stack>
-            </Paper>
+            </Stack>
           </Container>
         </AppShell.Main>
       </AppShell>
