@@ -1,6 +1,7 @@
 export type AuthResponse = {
   token: string;
   userId: string;
+  user: Profile;
 };
 
 export type LoginInput = {
@@ -23,9 +24,9 @@ export type UpdateProfileInput = {
 };
 
 export type Profile = {
-  id: string;
   email: string;
   username: string;
+  isAdmin: boolean;
   lastLogin: string;
 };
 

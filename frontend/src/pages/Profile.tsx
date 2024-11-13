@@ -9,49 +9,17 @@ import {
 } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
 
 import Header from '../components/header/Header';
 import EditProfileModal from '../components/modal/EditProfileModal';
 import { useAuth } from '../hooks/AuthProvider';
 
 function Profile() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [lastLogin, setLastLogin] = useState('');
   const [
     isEditProfileModalOpened,
     { open: openEditProfileModal, close: closeEditProfileModal },
   ] = useDisclosure(false);
-  const [profileError, setProfileError] = useState<string | null>(null);
   const auth = useAuth();
-
-  // Fetch user profile
-  useEffect(() => {
-    async function fetchProfile() {
-      try {
-        console.log('Fetching Profile');
-        await auth.getProfileAction(setProfileError);
-      } catch (error) {
-        console.error('Error fetching profile:', profileError);
-      }
-    }
-    if (!auth.userProfile) {
-      fetchProfile();
-    } else {
-      setEmail(auth.userProfile.email);
-      setUsername(auth.userProfile.username);
-      setLastLogin(auth.userProfile.lastLogin);
-    }
-  }, [auth.userProfile]);
-
-  const handleLogoutAction = () => {
-    auth.logOutAction();
-  };
-
-  const openEditModal = () => {
-    openEditProfileModal();
-  };
 
   return (
     <>
@@ -79,17 +47,15 @@ function Profile() {
 
               <Stack justify="md">
                 <Title order={4}>Username</Title>
-                <Text>{username}</Text>
+                <Text>{auth.userProfile?.username ?? ''}</Text>
                 <Title order={4}>Email</Title>
-                <Text>{email}</Text>
+                <Text>{auth.userProfile?.email ?? ''}</Text>
                 <Title order={4}>Last Login</Title>
-                <Text>{new Date(lastLogin).toLocaleString()}</Text>
-                <Button onClick={openEditModal}>Edit Profile</Button>
-                <Button
-                  variant="light"
-                  color="red"
-                  onClick={handleLogoutAction}
-                >
+                <Text>
+                  {new Date(auth.userProfile?.lastLogin ?? '').toLocaleString()}
+                </Text>
+                <Button onClick={openEditProfileModal}>Edit Profile</Button>
+                <Button variant="light" color="red" onClick={auth.logOutAction}>
                   Log Out
                 </Button>
               </Stack>
@@ -101,7 +67,7 @@ function Profile() {
       <EditProfileModal
         isEditProfileModalOpen={isEditProfileModalOpened}
         closeEditProfileModal={closeEditProfileModal}
-        initialUsername={username}
+        initialUsername={auth.userProfile?.username ?? ''}
       />
     </>
   );
