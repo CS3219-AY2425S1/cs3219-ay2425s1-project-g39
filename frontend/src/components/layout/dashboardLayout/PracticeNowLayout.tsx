@@ -1,4 +1,4 @@
-import { Button, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { Button, Space, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useEffect, useRef, useState } from 'react';
@@ -9,14 +9,11 @@ import { checkSession } from '../../../apis/CollaborationApi';
 import config from '../../../config';
 import { useAuth } from '../../../hooks/AuthProvider';
 import { SessionResponse } from '../../../types/CollaborationType';
-import HelpModal from '../../modal/HelpModal';
 import MatchingCriteriaModal from '../../modal/MatchingCriteriaModal';
 import MatchingModal from '../../modal/MatchingModal';
 import RejoinSessionModal from '../../modal/RejoinSessionModal';
 
 function PracticeLayout() {
-  const [isHelpModalOpened, { open: openHelpModal, close: closeHelpModal }] =
-    useDisclosure(false);
   const [
     isMatchingCriteriaModalOpen,
     { open: openMatchingCriteriaModal, close: closeMatchingCriteriaModal },
@@ -96,7 +93,13 @@ function PracticeLayout() {
     });
 
     socketRef.current.on('connect', () => {
-      socketRef.current?.emit('register', auth.userId, difficulties, topics, localStorage.getItem('token'));
+      socketRef.current?.emit(
+        'register',
+        auth.userId,
+        difficulties,
+        topics,
+        localStorage.getItem('token'),
+      );
     });
 
     socketRef.current.on('match_found', (session) => {
@@ -168,18 +171,9 @@ function PracticeLayout() {
           Practice Now
         </Title>
         <Button onClick={handleStartMatching}>Start Interview</Button>
-        <Text ta="center">
-          Not sure how this works?{' '}
-          <UnstyledButton fw={700} onClick={openHelpModal}>
-            Learn now
-          </UnstyledButton>
-        </Text>
+        <Space />
       </Stack>
 
-      <HelpModal
-        isHelpModalOpened={isHelpModalOpened}
-        closeHelpModal={closeHelpModal}
-      />
       <MatchingCriteriaModal
         isMatchingCriteriaModalOpened={isMatchingCriteriaModalOpen}
         closeMatchingCriteriaModal={closeMatchingCriteriaModal}

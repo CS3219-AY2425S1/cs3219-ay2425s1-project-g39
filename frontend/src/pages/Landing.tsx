@@ -8,11 +8,11 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import LoginModal from '../components/modal/LoginModal';
 import SignUpModal from '../components/modal/SignUpModal';
-import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 
 function Landing() {
   const [isLoginModalOpened, { open: openLoginModal, close: closeLoginModal }] =
@@ -24,17 +24,17 @@ function Landing() {
 
   const location = useLocation();
   useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    if (params.get("login") === "true") {
+    const params = new URLSearchParams(location.search);
+    if (params.get('login') === 'true') {
       openLoginModal();
     }
-  })
+  });
 
   return (
     <>
       <AppShell withBorder={false} header={{ height: 80 }}>
-        <AppShell.Header px="40px" py="16px" bg="slate.9">
-          <Group justify="space-between">
+        <AppShell.Header px="40px" bg="slate.9">
+          <Group h="100%" justify="space-between" gap="20px">
             <a href="." className="logo">
               <Title c="white">PeerPrep</Title>
             </a>

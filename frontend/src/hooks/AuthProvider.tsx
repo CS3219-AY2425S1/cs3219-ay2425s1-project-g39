@@ -79,6 +79,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem('token', response.token);
         setUserId(response.userId);
         localStorage.setItem('userId', response.userId);
+        setUserProfile(response.user);
         navigate('/dashboard');
       },
       (error: any) => {

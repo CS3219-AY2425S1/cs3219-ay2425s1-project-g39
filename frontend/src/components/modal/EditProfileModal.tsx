@@ -1,4 +1,11 @@
-import { Button, Modal, PasswordInput, Text, TextInput } from '@mantine/core';
+import {
+  Button,
+  Modal,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { useState } from 'react';
 
 import { useAuth } from '../../hooks/AuthProvider';
@@ -36,19 +43,25 @@ function EditProfileModal({
       opened={isEditProfileModalOpen}
       onClose={closeEditProfileModal}
       title="Edit Profile"
+      centered
+      overlayProps={{
+        blur: 4,
+      }}
     >
-      <TextInput
-        label="New Username"
-        placeholder="Leave empty to keep the same"
-        onChange={(event) => setUsername(event.currentTarget.value)}
-      />
-      <PasswordInput
-        label="New Password"
-        placeholder="Leave empty to keep the same"
-        onChange={(event) => setPassword(event.currentTarget.value)}
-      />
-      <Button onClick={handleSaveChanges}>Save Changes</Button>
-      {editProfileError && <Text>{editProfileError}</Text>}
+      <Stack gap="16px">
+        <TextInput
+          label="New Username"
+          placeholder="Leave empty to keep the same"
+          onChange={(event) => setUsername(event.currentTarget.value)}
+        />
+        <PasswordInput
+          label="New Password"
+          placeholder="Leave empty to keep the same"
+          onChange={(event) => setPassword(event.currentTarget.value)}
+        />
+        <Button onClick={handleSaveChanges}>Save Changes</Button>
+        {editProfileError && <Text>{editProfileError}</Text>}
+      </Stack>
     </Modal>
   );
 }
