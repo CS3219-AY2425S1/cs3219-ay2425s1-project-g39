@@ -116,6 +116,19 @@ function PracticeLayout() {
 
     socketRef.current.on('disconnect', handleCancelMatching);
     socketRef.current.on('existing_search', handleCancelMatching);
+    socketRef.current.on('no_question_error', () => {
+      notifications.show({
+        title: 'No Question Found!',
+        message: 'A question could not be found with the provided criteria. Please change your selection.',
+        color: 'red',
+        autoClose: 6000,
+      });
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      closeMatchingModal();
+      openMatchingCriteriaModal();
+      });
   };
 
   const handleCancelMatching = () => {

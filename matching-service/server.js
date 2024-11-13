@@ -89,6 +89,8 @@ async function showUserQueue(status) {
 async function matchUsers(searchRequest) {
   const { userId, difficulty, topics, token } = searchRequest;
 
+  const difficultyLabel = "difficulty:";
+  const topicsLabel = "topics:";
   await showUserQueue('Before queue');
 
   if (userId == null) return;
@@ -100,38 +102,6 @@ async function matchUsers(searchRequest) {
   }
   
   const { default: fetch } = await import('node-fetch');
-
-    const response = await fetch(`${QUESTION_API_BASE_URL}/filter-one`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        difficulties: difficulty,
-        topics: topics,
-      }),
-      agent: agent,
-    });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  let question;
-  try {
-    question = await response.json();
-  } catch (error) {
-    const message = `A question could not be found with the provided criteria.`;
-    console.error(message);
-    channel.sendToQueue(
-      'error_queue',
-      Buffer.from(JSON.stringify({ userId, errorTag: 'no_question_error' })),
-    );
-    return;
-  }
-
-  console.log('Question:', question);
 
   const matchedByTopics = await findMatchByTopics(topics);
   const matchedByDifficulty = await findMatchByDifficulty(difficulty);
@@ -155,14 +125,81 @@ async function matchUsers(searchRequest) {
     if (a.value > b.value) return 1; // a comes after b
     return 0; // a and b are equal
   });
-  const matchedUser = combinedMatchesWValues[0]?.key;
+
+  let matchedUser = null;
+  let matchedQuestion = null;
+
+  // Get all keys in Redis
+  const keys = await redisClient.keys('*');
+  const filteredKeys = keys.filter(
+    (key) => key.startsWith(difficultyLabel) || key.startsWith(topicsLabel),
+  );
+
+  for (let i=0; i<combinedMatchesWValues.length; i++) {
+    const userId = combinedMatchesWValues[i].key;
+    var otherDifficulty = [];
+    var otherTopics = [];
+    const pattern = new RegExp(`^(${difficultyLabel}|${topicsLabel})(.*)$`);
+    
+    for (let key of filteredKeys) {
+      const isMember = await redisClient.SISMEMBER(key, userId);
+      
+      if (isMember) {
+        // Match the key with the pattern and assign to difficulty or topics lists
+        const matches = key.match(pattern);
+        if (matches) {
+          const label = matches[1];
+          const value = matches[2];
+
+          if (label === difficultyLabel) {
+            otherDifficulty.push(value);
+          }
+
+          if (label === topicsLabel) {
+            otherTopics.push(value);
+          }
+        }
+      }
+    }
+
+    console.log(difficulty, otherDifficulty);
+    console.log(topics, otherTopics);
+    const difficultyIntersection = difficulty.filter(element => otherDifficulty.includes(element))
+    const topicsIntersection = topics.filter(element => otherTopics.includes(element))
+    console.log(`Difficulty Intersection: ${difficultyIntersection}`);
+    console.log(`Topics Intersection: ${topicsIntersection}`);
+
+    const response = await fetch(`${QUESTION_API_BASE_URL}/filter-one`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        difficulties: difficultyIntersection,
+        topics: topicsIntersection,
+      }),
+      agent: agent,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    try {
+      matchedQuestion = await response.json();
+      matchedUser = userId;
+      break;
+    } catch (error) {
+      continue;
+    }
+  }
+
 
   if (matchedUser) {
     const matchMessage = {
       userId,
       matchedUserId: matchedUser,
       sessionId: uuid.v7(),
-      questionId: question.id,
+      questionId: matchedQuestion.id,
     };
 
     channel.sendToQueue(
@@ -173,15 +210,40 @@ async function matchUsers(searchRequest) {
       `Match found: User ID ${userId} matched with ${matchMessage.matchedUserId}`,
     );
     redisClient.del(matchMessage.matchedUserId);
-    const keys = await redisClient.keys('*');
-    const filteredKeys = keys.filter(
-      (key) => key.startsWith('difficulty:') || key.startsWith('topics:'),
-    );
     filteredKeys.forEach((key) => {
       redisClient.SREM(key, userId);
     });
   } else {
     console.log(`No match found for User ID: ${userId}`);
+
+    // check if selection is available
+    const response = await fetch(`${QUESTION_API_BASE_URL}/filter-one`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        difficulties: difficulty,
+        topics: topics,
+      }),
+      agent: agent,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    try {
+      await response.json();
+    } catch (error) {
+      const message = `A question could not be found with the provided criteria.`;
+      console.error(message);
+      channel.sendToQueue(
+        'error_queue',
+        Buffer.from(JSON.stringify({ userId, errorTag: 'no_question_error' })),
+      );
+      return;
+    }
+
     redisClient.set(userId, Date.now());
     difficulty.forEach((tag) => {
       redisClient.SADD(`difficulty:${tag}`, userId);
