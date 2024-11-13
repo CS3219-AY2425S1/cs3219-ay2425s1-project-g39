@@ -39,11 +39,16 @@ function Profile() {
               gap="20px"
               style={{ borderRadius: '4px' }}
             >
-              <Avatar
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
-                size="lg"
-                style={{ alignSelf: 'center' }}
-              />
+              {auth.userProfile ? (
+                <Avatar
+                  size="lg"
+                  name={auth.userProfile.username}
+                  color="initials"
+                  style={{ alignSelf: 'center' }}
+                />
+              ) : (
+                <Avatar />
+              )}
 
               <Stack justify="md">
                 <Title order={4}>Username</Title>

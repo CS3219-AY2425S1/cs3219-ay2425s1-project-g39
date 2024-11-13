@@ -54,10 +54,11 @@ function Header() {
         )}
         <Link to="../profile">
           <UnstyledButton>
-            <Avatar
-              src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
-              radius="xl"
-            />
+            {auth.userProfile ? (
+              <Avatar name={auth.userProfile.username} color="initials" />
+            ) : (
+              <Avatar />
+            )}
           </UnstyledButton>
         </Link>
       </Group>
