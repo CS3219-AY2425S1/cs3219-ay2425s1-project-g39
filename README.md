@@ -2,7 +2,20 @@
 
 # PeerPrep
 
+![PeerPrep](docs/peerprep.png)
+
 ## Overview
+
+[**PeerPrep**](https://peerprep.zoeang.dev/) is designed for programmers to practice and ace technical interviews by matching with others to practice LeetCode questions.
+
+Some of PeerPrep's features include:
+
+- :white_check_mark: Partner matching based on chosen question topic and difficulty
+- :pencil: Collaborative coding pad to simulate technical interviews
+- :telephone_receiver: Video call to communicate with your partner
+- :notebook: History of practice attempts for revision
+
+Start using [**PeerPrep**](https://peerprep.zoeang.dev/) now!
 
 ## Team
 
@@ -14,7 +27,11 @@ Members of CS3219 Project Group 39:
 - Li Yingming
 - Jason Qiu
 
-## Getting Started
+## Contributing
+
+Feel free to check out our [technical report](docs/technical-report.pdf) for this project!
+
+### Installation
 
 1. Clone this repository.
 
@@ -25,7 +42,7 @@ cd cs3219-ay2425s1-project-g39
 
 2. Add environment variables.
 
-Add the provided secret .env folder in the root directory ```cs3219-ay2425s1-project-g39```
+Add the provided secret .env folder in the root directory `cs3219-ay2425s1-project-g39`
 
 3. Run the docker containers.
 
@@ -35,20 +52,8 @@ docker compose up -d
 
 Congratulations! You have successfully set up PeerPrep. :tada:
 
-When you open up the webpage, you should see the following welcome page: 
-
-![image](https://github.com/user-attachments/assets/927e0b91-e577-4114-93ef-98deae3533f8)
-
-Sign up for an account with your email address and password, and use that to log in. Once you have logged in, you should see the following page: 
-
-![image](https://github.com/user-attachments/assets/0ae11b55-65e7-42d1-8ac7-8c617cb7594e)
-
-From here, just click on any of the questions to see their descriptions. You can filter for any topic or difficulty of your choosing using the selectors.
-
 4. Stop and remove the docker containers and images.
 
 ```bash
 docker compose up --rmi "all"
 ```
-
-
