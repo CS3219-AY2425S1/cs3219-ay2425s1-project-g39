@@ -1,6 +1,7 @@
-import { Button, Group, Loader, Modal, Stack, Text } from '@mantine/core';
+import { Button, Group, Loader, Modal, Stack, Text, ActionIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
+import { IconMicrophone, IconMicrophoneOff, IconVideo, IconVideoOff } from '@tabler/icons-react';
 import { ViewUpdate } from '@uiw/react-codemirror';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -27,6 +28,8 @@ import { Question, TestCase } from '../types/QuestionType';
 function Room() {
   const [loading, setLoading] = useState(true);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const localStreamRef = useRef<MediaStream | null>(null);
+
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
@@ -45,6 +48,7 @@ function Room() {
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState<SupportedLanguage>('python');
   const [isRunningCode, setIsRunningCode] = useState(false);
+  const isRoomJoinedRef = useRef<boolean>(false);
 
   const [
     isLeaveSessionModalOpened,
@@ -67,6 +71,9 @@ function Room() {
   const isRemoteUpdateRef = useRef(false);
   const viewUpdateRef = useRef<ViewUpdate | null>(null);
 
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+
   const configServer = {
     iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
   };
@@ -80,6 +87,7 @@ function Room() {
           video: true,
         });
         setLocalStream(stream);
+        localStreamRef.current = stream;
         setLoading(false);
       } catch (error) {
         console.error('Permissions not granted:', error);
@@ -88,7 +96,52 @@ function Room() {
     };
 
     requestMediaPermissions();
+
+    return () => {
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach((track) => track.stop());
+        localStreamRef.current = null;
+      }
+      peerConnectionRef.current = null;
+      stopRemoteStream();
+      // Disconnect sockets
+      if (collaborationSocketRef.current) {
+        collaborationSocketRef.current.disconnect();
+        collaborationSocketRef.current = null;
+      }
+      if (communicationSocketRef.current) {
+        communicationSocketRef.current.disconnect();
+        communicationSocketRef.current = null;
+        isRoomJoinedRef.current = false;
+      }
+    };
   }, []);
+
+  // Toggle mute
+  const handleMuteUnmute = () => {
+    if (localStream) {
+      const audioTrack = localStream
+        .getTracks()
+        .find((track) => track.kind === 'audio');
+      if (audioTrack) {
+        audioTrack.enabled = isMuted;
+        setIsMuted(!isMuted);
+      }
+    }
+  };
+
+  // Toggle video
+  const handleCameraToggle = () => {
+    if (localStream) {
+      const videoTrack = localStream
+        .getTracks()
+        .find((track) => track.kind === 'video');
+      if (videoTrack) {
+        videoTrack.enabled = isVideoOff;
+        setIsVideoOff(!isVideoOff);
+      }
+    }
+  };
 
   useEffect(() => {
     if (loading || !sessionData) {
@@ -120,6 +173,8 @@ function Room() {
   ) => {
     if (collaborationSocketRef.current) {
       collaborationSocketRef.current.disconnect();
+      collaborationSocketRef.current = null;
+      isRoomJoinedRef.current = false;
     }
 
     const token = localStorage.getItem('token');
@@ -222,6 +277,7 @@ function Room() {
 
     communicationSocketRef.current.on('roomJoined', () => {
       communicationSocketRef.current?.emit('ready-to-call');
+      isRoomJoinedRef.current = true;
     }); 
 
     communicationSocketRef.current.on(
@@ -252,6 +308,13 @@ function Room() {
     isRemoteUpdateRef.current = false;
   }, [code]);
 
+  const stopRemoteStream = () => {
+    if (remoteStream) {
+      remoteStream.getTracks().forEach((track) => track.stop());
+      setRemoteStream(null); // Set remoteStream to null after stopping its tracks
+    }
+  };
+
   const handleLanguageChange = (newLanguage: SupportedLanguage) => {
     setLanguage(newLanguage);
     collaborationSocketRef.current?.emit('edit-language', newLanguage);
@@ -259,7 +322,15 @@ function Room() {
 
   const handleLeaveSession = () => {
     collaborationSocketRef.current?.disconnect();
+    collaborationSocketRef.current = null;
     communicationSocketRef.current?.disconnect();
+    communicationSocketRef.current = null;
+    isRoomJoinedRef.current = false;
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
+      localStreamRef.current = null;
+    }
+    peerConnectionRef.current = null;
     navigate('/dashboard');
   };
 
@@ -379,7 +450,7 @@ function Room() {
   };
 
   const handleUserLeft = () => {
-    setRemoteStream(null); // Reset the remote video
+    stopRemoteStream();
     resetPeerConnection(); // Reset the peer connection
   };
 
@@ -424,6 +495,14 @@ function Room() {
         <Stack h="100%" w="500px" gap="10px">
           <Group gap="10px">
             <VideoCall localStream={localStream} remoteStream={remoteStream} />
+          </Group>
+          <Group  justify="center">
+            <ActionIcon onClick={handleMuteUnmute} size="xl" variant="outline">
+              {isMuted ? <IconMicrophoneOff size={24} /> : <IconMicrophone size={24} />}
+            </ActionIcon>
+            <ActionIcon onClick={handleCameraToggle} size="xl" variant="outline" style={{ marginLeft: 10 }}>
+              {isVideoOff ? <IconVideoOff size={24} /> : <IconVideo size={24} />}
+            </ActionIcon>
           </Group>
           <RoomTabs
             question={question}
