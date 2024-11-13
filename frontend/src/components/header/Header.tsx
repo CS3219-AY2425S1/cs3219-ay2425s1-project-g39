@@ -12,9 +12,12 @@ import {
 import { IconHelpHexagon, IconSettings } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
+import { useAuth } from '../../hooks/AuthProvider';
 import classes from './Header.module.css';
 
 function Header() {
+  const auth = useAuth();
+
   return (
     <AppShell.Header px="40px" bg="slate.9">
       <Group h="100%" justify="space-between" gap="20px">
@@ -22,31 +25,33 @@ function Header() {
           <Title c="white">PeerPrep</Title>
         </Link>
         <Space style={{ flexGrow: 1 }} />
-        <Menu
-          shadow="md"
-          width={225}
-          position="bottom-end"
-          trigger="hover"
-          openDelay={100}
-          closeDelay={400}
-        >
-          <Menu.Target>
-            <ActionIcon variant="subtle" color="white" aria-label="Settings">
-              <IconSettings size="32px" />
-            </ActionIcon>
-          </Menu.Target>
+        {auth.userProfile?.isAdmin && (
+          <Menu
+            shadow="md"
+            width={225}
+            position="bottom-end"
+            trigger="hover"
+            openDelay={100}
+            closeDelay={400}
+          >
+            <Menu.Target>
+              <ActionIcon variant="subtle" color="white" aria-label="Settings">
+                <IconSettings size="32px" />
+              </ActionIcon>
+            </Menu.Target>
 
-          <Menu.Dropdown classNames={{ dropdown: classes.dropdown }}>
-            <Menu.Label>Admin</Menu.Label>
-            <Menu.Item leftSection={<IconHelpHexagon />}>
-              <Link to="../admin">
-                <Text c="white" fz="14px">
-                  Manage Questions
-                </Text>
-              </Link>
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+            <Menu.Dropdown classNames={{ dropdown: classes.dropdown }}>
+              <Menu.Label>Admin</Menu.Label>
+              <Menu.Item leftSection={<IconHelpHexagon />}>
+                <Link to="../admin">
+                  <Text c="white" fz="14px">
+                    Manage Questions
+                  </Text>
+                </Link>
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        )}
         <Link to="../profile">
           <UnstyledButton>
             <Avatar
