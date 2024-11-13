@@ -14,7 +14,7 @@ export const createNewQuestion = async (req, res) => {
         images: images
       });
       await question.save();
-      return res.status(200).json(question);;
+      return res.status(200).json(question);
     } catch (err) {
       return res.status(500).json({ 
         message: "Error when creating new question!",

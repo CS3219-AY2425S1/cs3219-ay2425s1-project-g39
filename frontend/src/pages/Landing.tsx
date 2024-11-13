@@ -7,8 +7,9 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import LoginModal from '../components/modal/LoginModal';
 import SignUpModal from '../components/modal/SignUpModal';
@@ -21,11 +22,19 @@ function Landing() {
     { open: openSignUpModal, close: closeSignUpModal },
   ] = useDisclosure(false);
 
+  const location = useLocation();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('login') === 'true') {
+      openLoginModal();
+    }
+  });
+
   return (
     <>
       <AppShell withBorder={false} header={{ height: 80 }}>
-        <AppShell.Header px="40px" py="16px" bg="slate.8">
-          <Group justify="space-between">
+        <AppShell.Header px="40px" bg="slate.9">
+          <Group h="100%" justify="space-between" gap="20px">
             <a href="." className="logo">
               <Title c="white">PeerPrep</Title>
             </a>

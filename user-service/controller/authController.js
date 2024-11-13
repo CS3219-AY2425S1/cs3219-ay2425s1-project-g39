@@ -27,10 +27,14 @@ const loginUser = async (req, res) => {
     user.lastLogin = new Date();
     await updateUserById(user._id, { lastLogin: user.lastLogin });
 
-    const token = jwt.sign({ userId: user._id }, process.env.USER_JWT_SECRET, {
-      expiresIn: '1y',
-    });
-    res.json({ token: token, userId: user._id.toString() });
+    const token = jwt.sign(
+      { userId: user._id, isAdmin: user.isAdmin, username: user.username },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1y',
+      },
+    );
+    res.json({ token: token, userId: user._id.toString(), user: user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -74,7 +78,7 @@ const forgotPassword = async (req, res) => {
       subject: 'Password Reset',
       text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
              Please click on the following link, or paste this into your browser to complete the process:\n\n
-             http://localhost:3000/reset-password/${resetToken}\n\n
+             ${process.env.DOMAIN_NAME}/reset-password/${resetToken}\n\n
              If you did not request this, please ignore this email and your password will remain unchanged.\n`,
     };
 

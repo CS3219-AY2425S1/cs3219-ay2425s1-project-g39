@@ -10,7 +10,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Verify the token and extract the user payload
-    const user = jwt.verify(token, process.env.USER_JWT_SECRET);
+    const user = jwt.verify(token, process.env.JWT_SECRET);
 
     // Load the latest user info from the database
     const dbUser = await findUserById(user.userId);

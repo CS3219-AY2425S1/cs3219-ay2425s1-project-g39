@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shared Code Editor</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      #editor {
+        width: 100%;
+        height: 50vh;
+        font-family: monospace;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+      }
+      .notification {
+        color: green;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Shared Code Editor</h1>
+    <!-- Input to enter the session ID -->
+    <div>
+      <label for="session-id">Enter Session ID:</label>
+      <input type="text" id="session-id" placeholder="Enter session ID" />
+    </div>
+    <!-- Input for matchedUserId -->
+    <div>
+      <label for="matched-user-id">Enter Matched User ID:</label>
+      <input
+        type="text"
+        id="matched-user-id"
+        placeholder="Enter matched user ID"
+      />
+    </div>
+    <!-- Input for auth-token -->
+    <div>
+      <label for="token">Enter auth token:</label>
+      <input type="text" id="token" placeholder="Enter token" />
+    </div>
+    <button id="join-session">Join Session</button>
+    <div id="messages"></div>
+    <!-- For feedback messages -->
+    <!-- The code editor area -->
+    <textarea id="editor" disabled></textarea>
+    <!-- Load the socket.io.js script from a CDN -->
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <script>
+      // Create a custom socket connection with an authorization header
+
+      const editor = document.getElementById('editor');
+      const sessionIdInput = document.getElementById('session-id');
+      const matchedUserIdInput = document.getElementById('matched-user-id');
+      const joinSessionButton = document.getElementById('join-session');
+      const messages = document.getElementById('messages');
+      const tokenInput = document.getElementById('token');
+
+      // Handle the session joining logic
+      joinSessionButton.addEventListener('click', () => {
+        const token = tokenInput.value.trim();
+        console.log("token: ", token);
+        const socket = io({
+          path: '/api/collab/socket.io',
+          // extraHeaders: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+          auth: {
+            token: `Bearer ${token}`
+          }
+        });
+        const sessionId = sessionIdInput.value.trim();
+        const matchedUserId = matchedUserIdInput.value.trim();
+        if (sessionId && matchedUserId) {
+          socket.emit('join-session', {
+            sessionId: sessionId,
+            matchedUserId: matchedUserId,
+            questionId: 3,
+          });
+          messages.textContent = `Joining session ${sessionId}...`;
+          // Enable the editor once joined
+          editor.disabled = false;
+          // Listen for the current code state from the server
+          socket.on('load-code', (code) => {
+            editor.value = code;
+            messages.textContent = `Joined session ${sessionId}`;
+          });
+          // Listen for code updates from others in the session
+          socket.on('code-updated', (newCode) => {
+            editor.value = newCode;
+          });
+          // Send code changes to the server
+          editor.addEventListener('input', () => {
+            socket.emit('edit-code', editor.value);
+          });
+          // Handle errors
+          socket.on('error', (errorMessage) => {
+            messages.innerHTML += `<div class="error">${errorMessage}</div>`;
+          });
+        } else {
+          messages.innerHTML +=
+            '<div class="error">All fields are required.</div>';
+        }
+      });
+    </script>
+  </body>
+</html>

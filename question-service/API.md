@@ -1,6 +1,6 @@
 # Question Service API Documentation
 
-endpoint: `http://localhost:8000/api`
+endpoint: `http://localhost:8000/api/questions`
 
 ## CREATE Route
 
@@ -24,49 +24,50 @@ endpoint: `http://localhost:8000/api`
 
   - **Success**:
 
-      ```json
-        {
-          "id": 21,
-          "title": "Reverse a String 2",
-          "description": "Write a function that reverses a string. The input string is given as an array of characters s.\n\nYou must do this by modifying the input array in-place with O(1) extra memory.\n\n\nExample 1:\n\nInput: s = [\"h\",\"e\",\"l\",\"l\",\"o\"]\nOutput: [\"o\",\"l\",\"l\",\"e\",\"h\"]\n\nExample 2:\nInput: s = [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]\nOutput: [\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]\n\nConstraints:\n1 <= s.length <= 105 s[i] is a printable ascii character.",
-          "topics": [
-              "Strings",
-              "Algorithms"
-          ],
-          "difficulty": "Easy",
-          "images": [
-              "P1213381.jpeg"
-          ],
-          "_id": "66f701a60ef4b01ca799b93d",
-          "__v": 0
-        }
-        ```
+    ````json
+      {
+        "id": 21,
+        "title": "Reverse a String 2",
+        "description": "Write a function that reverses a string. The input string is given as an array of characters s.\n\nYou must do this by modifying the input array in-place with O(1) extra memory.\n\n\nExample 1:\n\nInput: s = [\"h\",\"e\",\"l\",\"l\",\"o\"]\nOutput: [\"o\",\"l\",\"l\",\"e\",\"h\"]\n\nExample 2:\nInput: s = [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]\nOutput: [\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]\n\nConstraints:\n1 <= s.length <= 105 s[i] is a printable ascii character.",
+        "topics": [
+            "Strings",
+            "Algorithms"
+        ],
+        "difficulty": "Easy",
+        "images": [
+            "P1213381.jpeg"
+        ],
+        "_id": "66f701a60ef4b01ca799b93d",
+        "__v": 0
+      }
+      ```
+
+    ````
 
   - **Error**:
 
     ```json
-        {
-          "message": "Error when creating new question!",
-          "error": {
-              "errors": {
-                  "title": {
-                      "name": "ValidatorError",
-                      "message": "Path `title` is required.",
-                      "properties": {
-                          "message": "Path `title` is required.",
-                          "type": "required",
-                          "path": "title"
-                      },
-                      "kind": "required",
-                      "path": "title"
-                  }
-              },
-              "_message": "Question validation failed",
-              "name": "ValidationError",
-              "message": "Question validation failed: title: Path `title` is required."
-              }
-              }
-
+    {
+      "message": "Error when creating new question!",
+      "error": {
+        "errors": {
+          "title": {
+            "name": "ValidatorError",
+            "message": "Path `title` is required.",
+            "properties": {
+              "message": "Path `title` is required.",
+              "type": "required",
+              "path": "title"
+            },
+            "kind": "required",
+            "path": "title"
+          }
+        },
+        "_message": "Question validation failed",
+        "name": "ValidationError",
+        "message": "Question validation failed: title: Path `title` is required."
+      }
+    }
     ```
 
 ## READ Routes
@@ -259,7 +260,37 @@ endpoint: `http://localhost:8000/api`
     ]
     ```
 
-### 6. Get Next Avilable ID
+### 6. Get One Random Question By Filter
+
+- **Endpoint**: `POST /filter-one`
+- **Purpose**: Get one random question by setting multiple criteria.
+- **Input**: This example input requests for a question that falls under at least one of these topics, AND is of one of these difficulties. If only one field is needed, the other should be exluded. If both fields are excluded all questions will be returned.
+
+  ```json
+  {
+    "topics": ["Strings", "Arrays"],
+    "difficulties": ["Easy", "Hard"]
+  }
+  ```
+
+- **Output**:
+
+  - **Success**:
+
+    ```json
+    {
+      "images": [],
+      "_id": "66ee9579ac0f39d60f4edd64",
+      "id": 1,
+      "title": "Reverse a String",
+      "description": "Write a function that reverses a string. The input string is given as an array of characters s.\n\nYou must do this by modifying the input array in-place with O(1) extra memory.\n\n\nExample 1:\n\nInput: s = [\"h\",\"e\",\"l\",\"l\",\"o\"]\nOutput: [\"o\",\"l\",\"l\",\"e\",\"h\"]\n\nExample 2:\nInput: s = [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]\nOutput: [\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]\n\nConstraints:\n1 <= s.length <= 105 s[i] is a printable ascii character.",
+      "topics": ["Strings", "Algorithms"],
+      "difficulty": "Easy",
+      "__v": 0
+    },
+    ```
+
+### 7. Get Next Avilable ID
 
 - **Endpoint**: `GET /nexid`
 - **Purpose**: Get the ID that will be automatically allocated to the next newly created question.
@@ -274,7 +305,7 @@ endpoint: `http://localhost:8000/api`
     }
     ```
 
-### 6. Get All Topics
+### 8. Get All Topics
 
 - **Endpoint**: `GET /topics`
 - **Purpose**: Get all topics.
@@ -291,7 +322,6 @@ endpoint: `http://localhost:8000/api`
         "Bit Manipulation",
         "Brainteaser",
         "Data Structures",
-        "Databases",
         "Recursion",
         "Strings"
       ]

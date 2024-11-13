@@ -1,0 +1,12 @@
+.input {
+  padding-left: 10px;
+}
+
+.dropdown {
+  border: 0;
+  background: var(--mantine-color-gray-9);
+}
+
+.option:hover {
+  background: var(--mantine-color-slate-9);
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Call and Chat</title>
+  <style>
+    /* Dark Mode Styling */
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #ffffff;
+    }
+
+    #roomInput, #localVideo, #remoteVideo {
+      margin-top: 10px;
+      width: 45%;
+      height: 300px;
+      border-radius: 8px;
+      background-color: #333;
+      border: 2px solid #555;
+    }
+
+    #chat {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    #chatInput {
+      width: calc(100% - 60px);
+      padding: 10px;
+      background-color: #333;
+      border: 1px solid #555;
+      color: #e0e0e0;
+      border-radius: 4px;
+    }
+
+    #sendBtn, #startCallBtn, #joinRoomBtn, #muteMicBtn {
+      padding: 10px 20px;
+      background-color: #3a3a3a;
+      color: #e0e0e0;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
+
+    #sendBtn:hover, #startCallBtn:hover, #joinRoomBtn:hover, #muteMicBtn:hover {
+      background-color: #555;
+    }
+
+    #messages {
+      margin-top: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      background-color: #222;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+
+    #messages div {
+      margin-bottom: 8px;
+      padding: 5px;
+      background-color: #333;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Video Call and Chat</h1>
+
+  <!-- Room ID Input Field -->
+  <div>
+    <input id="roomId" type="text" placeholder="Enter Room ID" style="width: calc(45% - 60px); padding: 10px;">
+    <button id="joinRoomBtn">Join Room</button>
+  </div>
+
+  <video id="localVideo" autoplay playsinline muted></video>
+  <video id="remoteVideo" autoplay playsinline></video>
+
+  <div id="chat">
+    <input id="chatInput" type="text" placeholder="Type a message...">
+    <button id="sendBtn">Send</button>
+    <button id="startCallBtn">Start Call</button>
+    <button id="muteMicBtn">Mute Mic</button> <!-- New Mute Button -->
+    <div id="messages"></div>
+  </div>
+
+  <script src="/api/comm/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

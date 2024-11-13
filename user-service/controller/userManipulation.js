@@ -9,10 +9,10 @@ const findUserByEmail = async (email) => {
 // Find user by token
 const findByToken = async (token) => {
   return await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }
-  })
-}
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+};
 
 // Find user by ID
 const findUserById = async (id) => {
@@ -41,7 +41,7 @@ const getUsers = async () => {
 
 // Delete all users
 const deleteAllUsers = async () => {
-  await User.deleteMany({ email: { $ne:  process.env.USER_EMAIL_USER } });
+  await User.deleteMany({ email: { $ne: process.env.USER_EMAIL_USER } });
 };
 
 // Insert default admin data
@@ -64,11 +64,10 @@ const insertDefaultData = async () => {
       await adminUser.save();
       console.log('Default admin user created.');
 
-
       // Create a default user 1
-      const userHashedPassword = await bcrypt.hash("password", 10);
+      const userHashedPassword = await bcrypt.hash('password', 10);
       const user = new User({
-        email: "test@gmail.com",
+        email: 'test@gmail.com',
         username: 'test_user',
         password: userHashedPassword,
         isAdmin: false,
@@ -79,7 +78,7 @@ const insertDefaultData = async () => {
 
       // Create a default user 2
       const user2 = new User({
-        email: "test2@gmail.com",
+        email: 'test2@gmail.com',
         username: 'test_user_2',
         password: userHashedPassword,
         isAdmin: false,

@@ -1,7 +1,8 @@
 import axios from 'axios';
+import config from '../config';
 
 export const api = axios.create({
-  baseURL: 'http://localhost/api',
+  baseURL: `${config.ROOT_BASE_API}api`,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -22,8 +23,6 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    const message = error.response?.data?.message || error.message;
-
-    return Promise.reject(message);
+    return Promise.reject(error.response);
   },
 );

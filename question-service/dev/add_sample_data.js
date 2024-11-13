@@ -1,28 +1,34 @@
-import mongoose from 'mongoose';
-import fs from 'fs';
 import 'dotenv/config';
-import Question from "../model/Question.js";
+import fs from 'fs';
+import mongoose from 'mongoose';
 
-const mongoDB = process.env.MONGO_URI;
+import Question from '../model/Question.js';
+
+const mongoDB = process.env.QUESTION_MONGO_CLOUD_URI;
 console.log(mongoDB);
-const Admin = mongoose.mongo.Admin;
 
-mongoose.connect(mongoDB);
-
-main().catch(err => console.log(err));
+main();
 
 async function main() {
-  fs.readFile('./data/sample_questions.json', async (err, data) => {
-    if (err) throw err;
-    const sample_questions = JSON.parse(data);
-    console.log(sample_questions[0]);
+  console.log('hello');
+  try {
     await mongoose.connect(mongoDB);
-    for (let i = 0; i < 20; i++) {
-      const sample_question = sample_questions[i];
-      console.log("sample question: ", sample_question);
-      const question = new Question(sample_question);
-      await question.save();
-      console.log("success for: ", sample_question.title);
-    }
-  });
+
+    // delete all
+    await Question.deleteMany({});
+
+    // add sample questions
+    fs.readFile('./data/sample_questions.json', async (err, data) => {
+      if (err) throw err;
+      const sample_questions = JSON.parse(data);
+      for (let i = 0; i < sample_questions.length; i++) { // Loop through the entire array
+        const sample_question = sample_questions[i];
+        console.log('success for: ', sample_question.title);
+        const question = new Question(sample_question);
+        await question.save();
+      }
+    })
+  } catch (error) {
+    console.log("error: ", error)
+  }
 }
